@@ -1,0 +1,630 @@
+/* Fonte e fundo externo */
+html,
+body {
+    min-height: 100%;
+    font-family: 'Trebuchet MS', Arial, sans-serif !important;
+    background-color: #d9efce !important;
+}
+
+/* Evita que o fundo padrão do Gradio esconda a floresta */
+gradio-app {
+    background: transparent !important;
+}
+
+.gr-group {
+    background: #FFFFFF !important;
+    border: 2px solid #D1EACB !important;
+    border-radius: 22px !important;
+    padding: 22px !important;
+    box-shadow: 0 5px 15px rgba(45, 100, 55, 0.08) !important;
+}
+
+button.primary {
+    background: #48A85B !important;
+    color: white !important;
+    border-radius: 16px !important;
+    font-weight: bold !important;
+    font-size: 16px !important;
+    border: none !important;
+}
+
+button.primary:hover {
+    background: #348B48 !important;
+    transform: translateY(-2px);
+}
+
+button.secondary {
+    border-radius: 16px !important;
+}
+
+h1, h2, h3 {
+    color: #27633C !important;
+}
+
+/* Cores principais do EcoLeitura */
+:root {
+    --primary-500: #39984d;
+    --primary-600: #287a3c;
+    --primary-700: #206431;
+    --primary-100: #e3f3df;
+    --color-accent: #39984d;
+}
+
+/* Rótulos dos campos */
+.gradio-container label,
+.gradio-container .label-wrap {
+    color: #245c36 !important;
+}
+
+/* Seleção do nível de leitura */
+.gradio-container input[type="radio"] {
+    accent-color: #39984d !important;
+}
+
+/* Opções selecionadas */
+.gradio-container input[type="radio"]:checked + span {
+    color: #245c36 !important;
+}
+
+/* Destaque ao clicar nos campos */
+.gradio-container input:focus,
+.gradio-container textarea:focus,
+.gradio-container select:focus {
+    outline-color: #39984d !important;
+    border-color: #39984d !important;
+}
+
+/* Cor de seleção de texto */
+.gradio-container ::selection {
+    background: #b9e5ae;
+    color: #184a2b;
+}
+
+/* Floresta fixa durante a rolagem */
+html,
+body {
+    background-image: url("/gradio_api/file=imagens/floresta.png") !important;
+    background-size: cover !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+    background-attachment: fixed !important;
+}
+
+/* Painel central */
+.gradio-container {
+    width: 100% !important;
+    max-width: 1250px !important;
+    margin: 0 auto !important;
+    background: rgba(237, 250, 230, 0.96) !important;
+    border-radius: 24px !important;
+    padding: 28px !important;
+    box-shadow: 0 8px 35px rgba(20, 65, 30, 0.18) !important;
+}
+
+
+@media (max-width: 768px) {
+    .gradio-container {
+        padding: 12px !important;
+        border-radius: 12px !important;
+    }
+
+    body {
+        background-attachment: scroll !important;
+    }
+}
+
+/* Área do mascote e seu balão de fala */
+.area-mascote {
+    align-items: center !important;
+    gap: 24px !important;
+}
+
+/* Imagem do mascote */
+.imagem-mascote {
+    max-width: 190px !important;
+    flex: 0 0 190px !important;
+}
+
+/* Balão de fala */
+.balao-mascote {
+    position: relative !important;
+    background: #ffffff !important;
+    border: 3px solid #48A85B !important;
+    border-radius: 24px !important;
+    padding: 20px 24px !important;
+    box-shadow: 0 5px 15px rgba(45, 100, 55, 0.12) !important;
+    color: #245c36 !important;
+    font-size: 17px !important;
+    line-height: 1.6 !important;
+}
+
+/* Pontinha do balão apontando para o mascote */
+.balao-mascote::before {
+    content: "";
+    position: absolute;
+    left: -15px;
+    top: 50%;
+    width: 24px;
+    height: 24px;
+    background: #ffffff;
+    border-left: 3px solid #48A85B;
+    border-bottom: 3px solid #48A85B;
+    transform: translateY(-50%) rotate(45deg);
+}
+
+/* Adaptação para celular */
+@media (max-width: 768px) {
+    .area-mascote {
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+
+    .imagem-mascote {
+        max-width: 160px !important;
+        flex: auto !important;
+    }
+
+    .balao-mascote::before {
+        left: 50%;
+        top: -15px;
+        transform: translateX(-50%) rotate(135deg);
+    }
+}
+
+/* Área da transcrição */
+.resultado-transcricao {
+    background: #ffffff;
+    border: 2px solid #d1eacb;
+    border-radius: 16px;
+    padding: 20px;
+    font-family: 'Trebuchet MS', Arial, sans-serif;
+}
+
+.resultado-transcricao strong {
+    color: #245c36;
+    font-size: 17px;
+}
+
+.resultado-transcricao p {
+    font-size: 22px;
+    line-height: 2;
+    margin-top: 12px;
+}
+
+/* Palavras reconhecidas corretamente */
+.palavra-correta {
+    color: #16803c;
+    font-weight: 800;
+}
+
+/* Palavras diferentes do texto esperado */
+.palavra-errada {
+    color: #d62828;
+    font-weight: 800;
+}
+
+/* Galeria de mascotes */
+
+/* Alinhar as legendas à esquerda */
+#galeria-mascotes .caption-label,
+#galeria-mascotes .caption,
+#galeria-mascotes .thumbnail-label,
+#galeria-mascotes figcaption {
+    text-align: left !important;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+    width: 100% !important;
+    margin-left: 0 !important;
+    padding-left: 4px !important;
+}
+
+/* Alinhar as legendas dos mascotes à esquerda */
+
+/* Cada cartão da galeria */
+#galeria-mascotes button.thumbnail-item {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+}
+
+/* Legenda abaixo da imagem */
+#galeria-mascotes button.thumbnail-item .caption-label {
+    display: block !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+
+    text-align: left !important;
+    align-self: stretch !important;
+
+    margin-left: 0 !important;
+    padding-left: 4px !important;
+}
+
+
+/* Efeito ao passar o mouse sobre os mascotes */
+#galeria-mascotes button.thumbnail-item {
+    position: relative !important;
+    cursor: pointer !important;
+}
+
+/* Destaque do personagem */
+#galeria-mascotes button.thumbnail-item:hover {
+    border: 2px solid #48A85B !important;
+    box-shadow: 0 4px 12px rgba(45, 100, 55, 0.2) !important;
+    transform: translateY(-2px);
+    transition: 0.2s ease;
+}
+/* Permite que os balões ultrapassem os cartões */
+#galeria-mascotes,
+#galeria-mascotes .grid-container,
+#galeria-mascotes .gallery-item,
+#galeria-mascotes button.thumbnail-item {
+    overflow: visible !important;
+}
+
+/* Mantém os cartões na posição original */
+#galeria-mascotes .gallery-item {
+    position: relative !important;
+    z-index: 1;
+}
+
+/* Coloca o cartão ativo acima dos demais */
+#galeria-mascotes .gallery-item:hover {
+    z-index: 9999 !important;
+}
+
+/* Balão de descrição */
+#galeria-mascotes .gallery-item button.thumbnail-item::after {
+    content: "";
+    position: absolute !important;
+
+    left: calc(100% + 10px);
+    top: 10px;
+
+    width: 230px;
+    padding: 12px;
+
+    background: white;
+    color: #245c36;
+    border: 2px solid #48A85B;
+    border-radius: 12px;
+
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+
+    font-size: 13px;
+    line-height: 1.5;
+    text-align: left;
+    white-space: normal;
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    z-index: 10000;
+
+    transition: opacity 0.2s ease;
+}
+
+/* Exibe o balão */
+#galeria-mascotes .gallery-item:hover button.thumbnail-item::after {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Terceira e quarta colunas: balão à esquerda */
+#galeria-mascotes .gallery-item:nth-child(4n+3) button.thumbnail-item::after,
+#galeria-mascotes .gallery-item:nth-child(4n+4) button.thumbnail-item::after {
+    left: auto;
+    right: calc(100% + 10px);
+}
+
+#galeria-mascotes .gallery-item:nth-child(1) button.thumbnail-item::after {
+    content: "Boitatá: Uma serpente de fogo que protege os campos e as florestas contra quem provoca queimadas.";
+}
+
+#galeria-mascotes .gallery-item:nth-child(2) button.thumbnail-item::after {
+    content: "Boto Cor de Rosa: Nas lendas amazônicas, transforma-se em um homem e aparece nas festas próximas aos rios.";
+}
+
+#galeria-mascotes .gallery-item:nth-child(3) button.thumbnail-item::after {
+    content: "Caipora: Um ser encantado que protege os animais e confunde caçadores que desrespeitam a floresta.";
+}
+
+#galeria-mascotes .gallery-item:nth-child(4) button.thumbnail-item::after {
+    content: "Curupira: Guardião da floresta, possui os pés virados para trás e protege as árvores e os animais.";
+}
+
+#galeria-mascotes .gallery-item:nth-child(5) button.thumbnail-item::after {
+    content: "Iara: Uma sereia encantada dos rios brasileiros, conhecida por sua beleza e seu canto misterioso.";
+}
+
+#galeria-mascotes .gallery-item:nth-child(6) button.thumbnail-item::after {
+    content: "Mãe do Ouro: Uma luz dourada misteriosa associada à proteção das riquezas escondidas na terra.";
+}
+
+#galeria-mascotes .gallery-item:nth-child(7) button.thumbnail-item::after {
+    content: "Mapinguari: Uma criatura gigante das lendas amazônicas, associada aos mistérios e perigos da floresta.";
+}
+
+#galeria-mascotes .gallery-item:nth-child(8) button.thumbnail-item::after {
+    content: "Saci: Um menino travesso de uma perna só, que usa um gorro vermelho e cria redemoinhos pelas matas.";
+}
+
+/* Eleva a galeria enquanto um personagem recebe o mouse */
+#galeria-mascotes {
+    position: relative !important;
+    z-index: 10;
+}
+
+#galeria-mascotes:has(.gallery-item:hover) {
+    z-index: 9999 !important;
+}
+
+
+
+
+
+
+/* ############ TAMANHO PADRÃO DOS TEXTOS DO ECOLEITURA ##########*/
+
+/* Textos comuns e instruções */
+.gradio-container p,
+.gradio-container .prose p {
+    font-size: 20px;
+    line-height: 1.6;
+}
+
+/* Textos das opções e campos */
+.gradio-container label,
+.gradio-container .wrap,
+.gradio-container input,
+.gradio-container textarea {
+    font-size: 16px;
+}
+
+/* Textos dos botões */
+.gradio-container button {
+    font-size: 18px;
+}
+
+/* Textos das abas */
+.gradio-container .tab-nav button {
+    font-size: 20px;
+}
+
+/* Títulos das seções */
+.gradio-container h2 {
+    font-size: 21px;
+}
+
+/* Subtítulos */
+.gradio-container h3 {
+    font-size: 22px;
+}
+
+
+
+/* ###########Ajustes para a Aba de fonética################# */
+
+/* Palavra em destaque na aba Aprendendo Palavras */
+#palavra-fonetica {
+    text-align: center !important;
+    padding: 18px 10px !important;
+}
+
+/* Texto da palavra */
+#palavra-fonetica p {
+    font-size: 38px !important;
+    font-weight: 800 !important;
+    color: #348B48 !important;
+    text-align: center !important;
+    line-height: 1.3 !important;
+    margin: 0 !important;
+    letter-spacing: 2px;
+}
+
+/* Galeria da atividade Aprendendo Palavras */
+#galeria-palavras .grid-container {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    height: 100% !important;
+    overflow: visible !important;
+}
+
+/* Cartões das quatro imagens */
+#galeria-palavras .gallery-item {
+    min-width: 0 !important;
+    min-height: 0 !important;
+    height: 100% !important;
+}
+
+/* Ajuste das imagens */
+#galeria-palavras .thumbnail-item {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+}
+
+/* Imagem inteira dentro do cartão */
+#galeria-palavras .thumbnail-item img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+}
+
+/* Resultado correto */
+.resultado-correto {
+    text-align: center;
+    padding: 20px;
+    background-color: #E6F6E9;
+    border: 2px solid #348B48;
+    border-radius: 16px;
+}
+
+.resultado-correto h2 {
+    color: #16832D !important;
+    font-size: 34px !important;
+    font-weight: 900 !important;
+    margin: 0 0 8px 0 !important;
+}
+
+.resultado-correto p {
+    color: #245C36 !important;
+    font-size: 16px !important;
+}
+
+/* Resultado incorreto */
+.resultado-errado {
+    text-align: center;
+    padding: 20px;
+    background-color: #FDEAEA;
+    border: 2px solid #D62828;
+    border-radius: 16px;
+}
+
+.resultado-errado h2 {
+    color: #D62828 !important;
+    font-size: 34px !important;
+    font-weight: 900 !important;
+    margin: 0 0 8px 0 !important;
+}
+
+.resultado-errado p {
+    color: #A61B1B !important;
+    font-size: 16px !important;
+}
+
+
+
+/* Área de reação na atividade de palavras */
+.feedback-fonetica-mascote {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 15px;
+}
+
+.feedback-fonetica-mascote img {
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
+}
+
+.feedback-fonetica-mascote p {
+    font-size: 22px !important;
+    font-weight: 800;
+    color: #348B48;
+}
+
+/* Animação de pulinhos */
+@keyframes pular-mascote {
+    0%, 100% {
+        transform: translateY(0);
+    }
+
+    40% {
+        transform: translateY(-22px);
+    }
+
+    60% {
+        transform: translateY(-12px);
+    }
+}
+
+.mascote-pulando {
+    animation: pular-mascote 0.65s ease-in-out 3;
+}
+
+.mascote-triste {
+    animation: none;
+}
+
+.feedback-fonetica-mascote:has(.mascote-triste) p {
+    color: #D62828;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mascote-pulando {
+        animation: none;
+    }
+}
+
+
+
+
+/* ############### ESTILO DE JOGO PARA OS DOIS GRAVADORES ##############*/
+
+.audio-jogo {
+    background: #E8F7E8 !important;
+    border: 3px solid #48A85B !important;
+    border-radius: 22px !important;
+    padding: 12px !important;
+    box-shadow: 0 5px 0 #B6DDB8 !important;
+    overflow: hidden;
+}
+
+/* Área interna */
+.audio-jogo .wrap {
+    background: #FFFFFF !important;
+    border-radius: 16px !important;
+}
+
+/* Título */
+.audio-jogo .label-wrap {
+    background: #D9F0D9 !important;
+    border-radius: 12px !important;
+}
+
+/* Botões */
+.audio-jogo button {
+    border-radius: 14px !important;
+    transition: transform 0.2s ease,
+                background-color 0.2s ease;
+}
+
+.audio-jogo button:hover {
+    transform: scale(1.06);
+}
+
+/* Botão de gravar */
+.audio-jogo button[aria-label*="Record"],
+.audio-jogo button[aria-label*="Gravar"] {
+    background: #48A85B !important;
+    color: white !important;
+    border-radius: 50% !important;
+    box-shadow: 0 4px 0 #28783A !important;
+}
+
+/* Cores do componente */
+.audio-jogo {
+    --primary-500: #48A85B;
+    --primary-600: #348B48;
+    --color-accent: #48A85B;
+}
+
+
+
+
+/* ######## TEXTO GERADO PELA IA - ÁREA DE LEITURA ######## */
+
+#texto-leitura textarea,
+#texto-leitura input {
+    font-size: 24px !important;
+    font-weight: 500 !important;
+    line-height: 1.8 !important;
+    color: #245C36 !important;
+    letter-spacing: 0.5px !important;
+    padding: 15px !important;
+}
+
+/* Adaptação para telas menores */
+@media (max-width: 768px) {
+    #texto-leitura textarea,
+    #texto-leitura input {
+        font-size: 21px !important;
+        line-height: 1.7 !important;
+    }
+}
