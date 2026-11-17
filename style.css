@@ -628,3 +628,11 @@ body {
         line-height: 1.7 !important;
     }
 }
+
+#cabecalho-ecoleitura {
+    align-items: center;
+}
+
+#sair-ecoleitura {
+    align-self: flex-start;
+}

@@ -1,2 +1,10 @@
-gradio>=5.0
+gradio>=6.0,<7.0
 faster-whisper>=1.0.0
+# faster-whisper 1.2.1 ainda usa metadata_errors, removido no PyAV 19.
+av>=18,<19
+google-genai
+python-dotenv
+gTTS
+fastapi>=0.115.2,<1.0
+uvicorn>=0.14
+python-multipart>=0.0.18

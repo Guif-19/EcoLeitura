@@ -3,7 +3,7 @@ EcoLeitura — PoC de alfabetização e educação ambiental
 Arquivo único: projeto.py
 
 Funcionalidades:
-1) Geração de texto ambiental com LLM local (Ollama).
+1) Geração de texto ambiental com Gemini.
 2) Gravação/envio de áudio e transcrição em português (faster-whisper).
 3) Comparação entre texto esperado e transcrição, com feedback estimado.
 4) Relatório da atividade na própria página.
@@ -23,6 +23,7 @@ import difflib
 from datetime import datetime
 
 import gradio as gr
+import uvicorn
 from faster_whisper import WhisperModel
 from pathlib import Path
 from dotenv import load_dotenv
@@ -30,6 +31,7 @@ load_dotenv(Path(__file__).with_name(".env"))
 from servicos import gerar_texto
 from fonetica import criar_aba_fonetica
 from missoes import criar_aba_missoes
+from autenticacao import criar_app
 
 
 # ----------------------------- CONFIGURAÇÕES -----------------------------
@@ -452,12 +454,22 @@ with gr.Blocks(
     indice_mascote_state = gr.State(None)
 
 
-    gr.Markdown(
-                        """
-                        # 🌱 EcoLeitura
-                        ### Melhorando a leitura, cuidando do planeta!
-                        """
-                    )
+    with gr.Row(elem_id="cabecalho-ecoleitura"):
+        gr.Markdown(
+            """
+            # 🌱 EcoLeitura
+            ### Melhorando a leitura, cuidando do planeta!
+            """
+        )
+        gr.Button(
+            "Sair",
+            link="/logout?all_session=false",
+            variant="secondary",
+            size="sm",
+            min_width=90,
+            scale=0,
+            elem_id="sair-ecoleitura",
+        )
 
     with gr.Tabs():
 
@@ -729,7 +741,8 @@ with gr.Blocks(
 
 
 if __name__ == "__main__":
-    demo.launch(
+    app = criar_app(
+        demo,
         theme=gr.themes.Soft(),
         css=CSS,
         allowed_paths=[
@@ -743,4 +756,9 @@ if __name__ == "__main__":
             ),
             PASTA_MASCOTES
         ]
+    )
+    uvicorn.run(
+        app,
+        host=os.getenv("GRADIO_SERVER_NAME", "127.0.0.1"),
+        port=int(os.getenv("GRADIO_SERVER_PORT", "7860")),
     )

@@ -1,0 +1,295 @@
+/* Entrada: os seletores ficam restritos à tela de autenticação do Gradio. */
+body:has(#ecoleitura-login) {
+    min-height: 100vh;
+    margin: 0;
+    font-family: 'Trebuchet MS', Arial, sans-serif;
+    background-image: radial-gradient(ellipse at top left, #c8e6bb, transparent 60%),
+        linear-gradient(145deg, #eaf6df, #d4eace 60%, #b9d5b2) !important;
+}
+
+gradio-app:has(#ecoleitura-login) {
+    background: transparent !important;
+}
+
+.gradio-container:has(#ecoleitura-login) {
+    max-width: 620px !important;
+    margin: 40px auto !important;
+    padding: 24px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    font-family: 'Trebuchet MS', Arial, sans-serif !important;
+    --body-text-color: #245c36;
+    --block-background-fill: #ffffff;
+    --block-border-color: #b8d0ae;
+    --block-label-background-fill: #e8f3e2;
+    --block-label-text-color: #245c36;
+    --input-background-fill: #ffffff;
+    --input-border-color: #b8d0ae;
+    --input-border-color-focus: #287a3c;
+    --input-text-color: #245c36;
+}
+
+.gradio-container:has(#ecoleitura-login) .wrap:has(> .column) {
+    min-height: auto !important;
+    background: transparent !important;
+}
+
+.gradio-container:has(#ecoleitura-login) .column:has(> .auth) {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 480px !important;
+    padding: 32px !important;
+    gap: 18px !important;
+    border: 1px solid #b8d0ae !important;
+    border-radius: 28px !important;
+    background: #fbfef8 !important;
+    box-shadow: 0 18px 60px rgba(20, 65, 30, 0.15) !important;
+}
+
+.gradio-container:has(#ecoleitura-login) .column:has(> .auth) > h2 {
+    display: none;
+}
+
+#ecoleitura-login,
+#ecoleitura-login > span {
+    display: block;
+    text-align: center;
+}
+
+#ecoleitura-login .login-simbolo {
+    width: 76px;
+    height: 76px;
+    margin: 0 auto 12px;
+    border-radius: 24px;
+    background: #e8f3e2;
+    font-size: 42px;
+    line-height: 76px;
+}
+
+#ecoleitura-login .login-marca {
+    color: #245c36;
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -1px;
+}
+
+#ecoleitura-login .login-slogan {
+    margin: 10px 0 26px;
+    color: #52634d;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+#ecoleitura-login .login-boas-vindas {
+    color: #245c36;
+    font-size: 23px;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+#ecoleitura-login .login-instrucao {
+    margin: 10px 0 4px;
+    color: #52634d;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+#ecoleitura-login .login-cadastro {
+    margin-top: 16px;
+    color: #52634d;
+    font-size: 16px;
+}
+
+#ecoleitura-login a,
+.pagina-cadastro a:not(.cadastro-primario) {
+    color: #245c36;
+    font-weight: bold;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.gradio-container:has(#ecoleitura-login) input {
+    min-height: 48px;
+    color: #245c36;
+    font-size: 17px;
+}
+
+.gradio-container:has(#ecoleitura-login) label {
+    color: #245c36;
+}
+
+.gradio-container:has(#ecoleitura-login) label > span {
+    background: #e8f3e2 !important;
+    color: #245c36 !important;
+}
+
+.gradio-container:has(#ecoleitura-login) input:focus {
+    outline-color: #348b48;
+}
+
+.gradio-container:has(#ecoleitura-login) .auth {
+    margin: 0;
+}
+
+.gradio-container:has(#ecoleitura-login) .creds {
+    padding: 12px;
+    border-radius: 12px;
+    background: #fff0ed;
+    color: #a32424 !important;
+    font-size: 16px;
+}
+
+.gradio-container:has(#ecoleitura-login) button.primary {
+    min-height: 52px;
+    background: #287a3c !important;
+    color: #ffffff !important;
+    border: 0;
+    border-radius: 16px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.gradio-container:has(#ecoleitura-login) button.primary:hover {
+    background: #206431 !important;
+}
+
+@media (max-width: 600px) {
+    .gradio-container:has(#ecoleitura-login) {
+        margin: 16px auto !important;
+        padding: 12px !important;
+    }
+
+    .gradio-container:has(#ecoleitura-login) .column:has(> .auth) {
+        padding: 24px 20px !important;
+    }
+
+    #ecoleitura-login .login-marca {
+        font-size: 32px;
+    }
+}
+
+/* Cadastro público: o mesmo visual da entrada, com formulário HTML simples. */
+.pagina-cadastro {
+    box-sizing: border-box;
+    min-height: 100vh;
+    margin: 0;
+    padding: 40px 20px;
+    font-family: 'Trebuchet MS', Arial, sans-serif;
+    color: #245c36;
+    background: radial-gradient(ellipse at top left, #c8e6bb, transparent 60%),
+        linear-gradient(145deg, #eaf6df, #d4eace 60%, #b9d5b2);
+}
+
+.pagina-cadastro * {
+    box-sizing: border-box;
+}
+
+.cartao-cadastro {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 32px;
+    border: 1px solid #b8d0ae;
+    border-radius: 28px;
+    background: #fbfef8;
+    box-shadow: 0 18px 60px rgba(20, 65, 30, 0.15);
+}
+
+.cadastro-marca {
+    text-align: center;
+    font-size: 26px;
+    font-weight: bold;
+}
+
+.cartao-cadastro h1 {
+    margin: 28px 0 10px;
+    text-align: center;
+    font-size: 28px;
+}
+
+.cadastro-descricao,
+.cadastro-voltar {
+    color: #52634d;
+    text-align: center;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.cartao-cadastro form {
+    display: flex;
+    flex-direction: column;
+    margin-top: 24px;
+}
+
+.cartao-cadastro label {
+    margin: 20px 0 8px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.cartao-cadastro label:first-child {
+    margin-top: 0;
+}
+
+.cartao-cadastro input {
+    width: 100%;
+    min-height: 48px;
+    padding: 12px;
+    border: 1px solid #b8d0ae;
+    border-radius: 12px;
+    background: #ffffff;
+    color: #245c36;
+    font: inherit;
+}
+
+.cartao-cadastro input:focus-visible,
+.pagina-cadastro a:focus-visible,
+.pagina-cadastro button:focus-visible {
+    outline: 3px solid #348b48;
+    outline-offset: 3px;
+}
+
+.cartao-cadastro small {
+    margin-top: 6px;
+    color: #52634d;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.cadastro-primario {
+    display: block;
+    width: 100%;
+    min-height: 52px;
+    margin-top: 26px;
+    padding: 15px;
+    border: 0;
+    border-radius: 16px;
+    color: #ffffff;
+    background: #287a3c;
+    font: bold 18px 'Trebuchet MS', Arial, sans-serif;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.cadastro-primario:hover {
+    background: #206431;
+}
+
+.cadastro-erro {
+    padding: 12px;
+    border-radius: 12px;
+    color: #a32424;
+    background: #fff0ed;
+    line-height: 1.5;
+}
+
+@media (max-width: 600px) {
+    .pagina-cadastro {
+        padding: 20px 16px;
+    }
+
+    .cartao-cadastro {
+        padding: 24px 20px;
+    }
+}
