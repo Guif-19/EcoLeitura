@@ -3,7 +3,7 @@ html,
 body {
     min-height: 100%;
     font-family: 'Trebuchet MS', Arial, sans-serif !important;
-    background-color: #d9efce !important;
+    background-color: var(--eco-fundo) !important;
 }
 
 /* Evita que o fundo padrão do Gradio esconda a floresta */
@@ -12,16 +12,16 @@ gradio-app {
 }
 
 .gr-group {
-    background: #FFFFFF !important;
-    border: 2px solid #D1EACB !important;
+    background: var(--eco-superficie) !important;
+    border: 2px solid var(--eco-borda) !important;
     border-radius: 22px !important;
     padding: 22px !important;
-    box-shadow: 0 5px 15px rgba(45, 100, 55, 0.08) !important;
+    box-shadow: 0 5px 15px var(--eco-sombra) !important;
 }
 
 button.primary {
-    background: #48A85B !important;
-    color: white !important;
+    background: var(--eco-primario) !important;
+    color: var(--eco-sobre-primario) !important;
     border-radius: 16px !important;
     font-weight: bold !important;
     font-size: 16px !important;
@@ -29,7 +29,7 @@ button.primary {
 }
 
 button.primary:hover {
-    background: #348B48 !important;
+    background: var(--eco-primario-hover) !important;
     transform: translateY(-2px);
 }
 
@@ -38,52 +38,52 @@ button.secondary {
 }
 
 h1, h2, h3 {
-    color: #27633C !important;
+    color: var(--eco-titulo) !important;
 }
 
 /* Cores principais do EcoLeitura */
 :root {
-    --primary-500: #39984d;
-    --primary-600: #287a3c;
-    --primary-700: #206431;
-    --primary-100: #e3f3df;
-    --color-accent: #39984d;
+    --primary-500: var(--eco-destaque);
+    --primary-600: var(--eco-primario);
+    --primary-700: var(--eco-primario-hover);
+    --primary-100: var(--eco-suave);
+    --color-accent: var(--eco-destaque);
 }
 
 /* Rótulos dos campos */
 .gradio-container label,
 .gradio-container .label-wrap {
-    color: #245c36 !important;
+    color: var(--eco-texto) !important;
 }
 
 /* Seleção do nível de leitura */
 .gradio-container input[type="radio"] {
-    accent-color: #39984d !important;
+    accent-color: var(--eco-destaque) !important;
 }
 
 /* Opções selecionadas */
 .gradio-container input[type="radio"]:checked + span {
-    color: #245c36 !important;
+    color: var(--eco-texto) !important;
 }
 
 /* Destaque ao clicar nos campos */
 .gradio-container input:focus,
 .gradio-container textarea:focus,
 .gradio-container select:focus {
-    outline-color: #39984d !important;
-    border-color: #39984d !important;
+    outline-color: var(--eco-destaque) !important;
+    border-color: var(--eco-destaque) !important;
 }
 
 /* Cor de seleção de texto */
 .gradio-container ::selection {
-    background: #b9e5ae;
-    color: #184a2b;
+    background: var(--eco-suave);
+    color: var(--eco-texto);
 }
 
 /* Floresta fixa durante a rolagem */
 html,
 body {
-    background-image: url("/gradio_api/file=imagens/floresta.png") !important;
+    background-image: linear-gradient(var(--eco-floresta-overlay), var(--eco-floresta-overlay)), url("/gradio_api/file=imagens/floresta.png") !important;
     background-size: cover !important;
     background-position: center center !important;
     background-repeat: no-repeat !important;
@@ -95,10 +95,10 @@ body {
     width: 100% !important;
     max-width: 1250px !important;
     margin: 0 auto !important;
-    background: rgba(237, 250, 230, 0.96) !important;
+    background: var(--eco-painel) !important;
     border-radius: 24px !important;
     padding: 28px !important;
-    box-shadow: 0 8px 35px rgba(20, 65, 30, 0.18) !important;
+    box-shadow: 0 8px 35px var(--eco-sombra) !important;
 }
 
 
@@ -128,12 +128,12 @@ body {
 /* Balão de fala */
 .balao-mascote {
     position: relative !important;
-    background: #ffffff !important;
-    border: 3px solid #48A85B !important;
+    background: var(--eco-superficie) !important;
+    border: 3px solid var(--eco-primario) !important;
     border-radius: 24px !important;
     padding: 20px 24px !important;
-    box-shadow: 0 5px 15px rgba(45, 100, 55, 0.12) !important;
-    color: #245c36 !important;
+    box-shadow: 0 5px 15px var(--eco-sombra) !important;
+    color: var(--eco-texto) !important;
     font-size: 17px !important;
     line-height: 1.6 !important;
 }
@@ -146,9 +146,9 @@ body {
     top: 50%;
     width: 24px;
     height: 24px;
-    background: #ffffff;
-    border-left: 3px solid #48A85B;
-    border-bottom: 3px solid #48A85B;
+    background: var(--eco-superficie);
+    border-left: 3px solid var(--eco-primario);
+    border-bottom: 3px solid var(--eco-primario);
     transform: translateY(-50%) rotate(45deg);
 }
 
@@ -173,15 +173,15 @@ body {
 
 /* Área da transcrição */
 .resultado-transcricao {
-    background: #ffffff;
-    border: 2px solid #d1eacb;
+    background: var(--eco-superficie);
+    border: 2px solid var(--eco-borda);
     border-radius: 16px;
     padding: 20px;
     font-family: 'Trebuchet MS', Arial, sans-serif;
 }
 
 .resultado-transcricao strong {
-    color: #245c36;
+    color: var(--eco-texto);
     font-size: 17px;
 }
 
@@ -193,13 +193,13 @@ body {
 
 /* Palavras reconhecidas corretamente */
 .palavra-correta {
-    color: #16803c;
+    color: var(--eco-sucesso);
     font-weight: 800;
 }
 
 /* Palavras diferentes do texto esperado */
 .palavra-errada {
-    color: #d62828;
+    color: var(--eco-erro);
     font-weight: 800;
 }
 
@@ -249,8 +249,8 @@ body {
 
 /* Destaque do personagem */
 #galeria-mascotes button.thumbnail-item:hover {
-    border: 2px solid #48A85B !important;
-    box-shadow: 0 4px 12px rgba(45, 100, 55, 0.2) !important;
+    border: 2px solid var(--eco-primario) !important;
+    box-shadow: 0 4px 12px var(--eco-sombra) !important;
     transform: translateY(-2px);
     transition: 0.2s ease;
 }
@@ -272,98 +272,6 @@ body {
 #galeria-mascotes .gallery-item:hover {
     z-index: 9999 !important;
 }
-
-/* Balão de descrição */
-#galeria-mascotes .gallery-item button.thumbnail-item::after {
-    content: "";
-    position: absolute !important;
-
-    left: calc(100% + 10px);
-    top: 10px;
-
-    width: 230px;
-    padding: 12px;
-
-    background: white;
-    color: #245c36;
-    border: 2px solid #48A85B;
-    border-radius: 12px;
-
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-
-    font-size: 13px;
-    line-height: 1.5;
-    text-align: left;
-    white-space: normal;
-
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-
-    z-index: 10000;
-
-    transition: opacity 0.2s ease;
-}
-
-/* Exibe o balão */
-#galeria-mascotes .gallery-item:hover button.thumbnail-item::after {
-    opacity: 1;
-    visibility: visible;
-}
-
-/* Terceira e quarta colunas: balão à esquerda */
-#galeria-mascotes .gallery-item:nth-child(4n+3) button.thumbnail-item::after,
-#galeria-mascotes .gallery-item:nth-child(4n+4) button.thumbnail-item::after {
-    left: auto;
-    right: calc(100% + 10px);
-}
-
-#galeria-mascotes .gallery-item:nth-child(1) button.thumbnail-item::after {
-    content: "Boitatá: Uma serpente de fogo que protege os campos e as florestas contra quem provoca queimadas.";
-}
-
-#galeria-mascotes .gallery-item:nth-child(2) button.thumbnail-item::after {
-    content: "Boto Cor de Rosa: Nas lendas amazônicas, transforma-se em um homem e aparece nas festas próximas aos rios.";
-}
-
-#galeria-mascotes .gallery-item:nth-child(3) button.thumbnail-item::after {
-    content: "Caipora: Um ser encantado que protege os animais e confunde caçadores que desrespeitam a floresta.";
-}
-
-#galeria-mascotes .gallery-item:nth-child(4) button.thumbnail-item::after {
-    content: "Curupira: Guardião da floresta, possui os pés virados para trás e protege as árvores e os animais.";
-}
-
-#galeria-mascotes .gallery-item:nth-child(5) button.thumbnail-item::after {
-    content: "Iara: Uma sereia encantada dos rios brasileiros, conhecida por sua beleza e seu canto misterioso.";
-}
-
-#galeria-mascotes .gallery-item:nth-child(6) button.thumbnail-item::after {
-    content: "Mãe do Ouro: Uma luz dourada misteriosa associada à proteção das riquezas escondidas na terra.";
-}
-
-#galeria-mascotes .gallery-item:nth-child(7) button.thumbnail-item::after {
-    content: "Mapinguari: Uma criatura gigante das lendas amazônicas, associada aos mistérios e perigos da floresta.";
-}
-
-#galeria-mascotes .gallery-item:nth-child(8) button.thumbnail-item::after {
-    content: "Saci: Um menino travesso de uma perna só, que usa um gorro vermelho e cria redemoinhos pelas matas.";
-}
-
-/* Eleva a galeria enquanto um personagem recebe o mouse */
-#galeria-mascotes {
-    position: relative !important;
-    z-index: 10;
-}
-
-#galeria-mascotes:has(.gallery-item:hover) {
-    z-index: 9999 !important;
-}
-
-
-
-
-
 
 /* ############ TAMANHO PADRÃO DOS TEXTOS DO ECOLEITURA ##########*/
 
@@ -416,7 +324,7 @@ body {
 #palavra-fonetica p {
     font-size: 38px !important;
     font-weight: 800 !important;
-    color: #348B48 !important;
+    color: var(--eco-destaque) !important;
     text-align: center !important;
     line-height: 1.3 !important;
     margin: 0 !important;
@@ -458,20 +366,20 @@ body {
 .resultado-correto {
     text-align: center;
     padding: 20px;
-    background-color: #E6F6E9;
-    border: 2px solid #348B48;
+    background-color: var(--eco-sucesso-fundo);
+    border: 2px solid var(--eco-destaque);
     border-radius: 16px;
 }
 
 .resultado-correto h2 {
-    color: #16832D !important;
+    color: var(--eco-sucesso) !important;
     font-size: 34px !important;
     font-weight: 900 !important;
     margin: 0 0 8px 0 !important;
 }
 
 .resultado-correto p {
-    color: #245C36 !important;
+    color: var(--eco-texto) !important;
     font-size: 16px !important;
 }
 
@@ -479,20 +387,20 @@ body {
 .resultado-errado {
     text-align: center;
     padding: 20px;
-    background-color: #FDEAEA;
-    border: 2px solid #D62828;
+    background-color: var(--eco-erro-fundo);
+    border: 2px solid var(--eco-erro);
     border-radius: 16px;
 }
 
 .resultado-errado h2 {
-    color: #D62828 !important;
+    color: var(--eco-erro) !important;
     font-size: 34px !important;
     font-weight: 900 !important;
     margin: 0 0 8px 0 !important;
 }
 
 .resultado-errado p {
-    color: #A61B1B !important;
+    color: var(--eco-erro) !important;
     font-size: 16px !important;
 }
 
@@ -516,7 +424,7 @@ body {
 .feedback-fonetica-mascote p {
     font-size: 22px !important;
     font-weight: 800;
-    color: #348B48;
+    color: var(--eco-destaque);
 }
 
 /* Animação de pulinhos */
@@ -543,7 +451,7 @@ body {
 }
 
 .feedback-fonetica-mascote:has(.mascote-triste) p {
-    color: #D62828;
+    color: var(--eco-erro);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -558,23 +466,23 @@ body {
 /* ############### ESTILO DE JOGO PARA OS DOIS GRAVADORES ##############*/
 
 .audio-jogo {
-    background: #E8F7E8 !important;
-    border: 3px solid #48A85B !important;
+    background: var(--eco-suave) !important;
+    border: 3px solid var(--eco-primario) !important;
     border-radius: 22px !important;
     padding: 12px !important;
-    box-shadow: 0 5px 0 #B6DDB8 !important;
+    box-shadow: 0 5px 0 var(--eco-borda) !important;
     overflow: hidden;
 }
 
 /* Área interna */
 .audio-jogo .wrap {
-    background: #FFFFFF !important;
+    background: var(--eco-superficie) !important;
     border-radius: 16px !important;
 }
 
 /* Título */
 .audio-jogo .label-wrap {
-    background: #D9F0D9 !important;
+    background: var(--eco-suave) !important;
     border-radius: 12px !important;
 }
 
@@ -592,17 +500,17 @@ body {
 /* Botão de gravar */
 .audio-jogo button[aria-label*="Record"],
 .audio-jogo button[aria-label*="Gravar"] {
-    background: #48A85B !important;
-    color: white !important;
+    background: var(--eco-primario) !important;
+    color: var(--eco-sobre-primario) !important;
     border-radius: 50% !important;
-    box-shadow: 0 4px 0 #28783A !important;
+    box-shadow: 0 4px 0 var(--eco-primario-hover) !important;
 }
 
 /* Cores do componente */
 .audio-jogo {
-    --primary-500: #48A85B;
-    --primary-600: #348B48;
-    --color-accent: #48A85B;
+    --primary-500: var(--eco-primario);
+    --primary-600: var(--eco-destaque);
+    --color-accent: var(--eco-primario);
 }
 
 
@@ -615,7 +523,7 @@ body {
     font-size: 24px !important;
     font-weight: 500 !important;
     line-height: 1.8 !important;
-    color: #245C36 !important;
+    color: var(--eco-texto) !important;
     letter-spacing: 0.5px !important;
     padding: 15px !important;
 }
@@ -635,4 +543,187 @@ body {
 
 #sair-ecoleitura {
     align-self: flex-start;
+}
+
+/* Fluxos do MVP revisados pelas heurísticas de Nielsen. */
+.gradio-container {
+    max-width: 1080px !important;
+    padding: 24px !important;
+    --layout-gap: 12px;
+}
+
+.gradio-container > .main {
+    padding: 0 !important;
+}
+
+.gradio-container p,
+.gradio-container .prose p {
+    font-size: 17px;
+    line-height: 1.55;
+}
+
+#cabecalho-ecoleitura h1 {
+    margin: 0;
+    font-size: 30px;
+}
+
+.gradio-container .conta-conectada,
+.gradio-container .nota-atividade p {
+    color: var(--eco-secundario);
+    font-size: 14px !important;
+    margin: 0;
+}
+
+.gradio-container [data-testid="block-info"],
+.gradio-container label:has(input[type="radio"]) {
+    color: var(--eco-texto) !important;
+    background: var(--eco-suave) !important;
+}
+
+.gradio-container label:has(input[type="radio"]:checked) {
+    border-color: var(--eco-destaque) !important;
+}
+
+.etapas-leitura {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    padding: 0;
+    margin: 8px 0 16px;
+    list-style: none;
+}
+
+.etapas-leitura li {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 8px;
+    border: 1px solid var(--eco-borda);
+    border-radius: 14px;
+    color: var(--eco-secundario);
+    background: var(--eco-superficie);
+    font-size: 16px;
+}
+
+.etapas-leitura li.ativa {
+    color: var(--eco-texto);
+    background: var(--eco-suave);
+    border: 2px solid var(--eco-destaque);
+    font-weight: bold;
+}
+
+.etapas-leitura span {
+    font-weight: bold;
+}
+
+#galeria-mascotes,
+#galeria-mascotes .grid-container,
+#galeria-palavras .grid-container {
+    height: auto !important;
+    max-height: none !important;
+}
+
+#galeria-mascotes .grid-container {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+    overflow: visible !important;
+}
+
+#galeria-mascotes .gallery-item {
+    min-width: 0 !important;
+    height: 180px !important;
+}
+
+#galeria-mascotes .thumbnail-item {
+    min-width: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+#galeria-mascotes .thumbnail-item img {
+    max-height: 138px !important;
+    object-fit: contain !important;
+}
+
+#galeria-mascotes .caption-label,
+#galeria-mascotes .caption,
+#galeria-mascotes figcaption {
+    white-space: normal !important;
+    text-overflow: clip !important;
+    overflow: visible !important;
+    font-size: 15px !important;
+    line-height: 1.3 !important;
+}
+
+#galeria-palavras .grid-container {
+    grid-template-rows: none !important;
+    grid-auto-rows: 180px;
+}
+
+#atividades-ecoleitura .tab-nav button {
+    min-width: 0;
+    padding: 12px 16px;
+    font-size: 18px;
+}
+
+.audio-jogo {
+    border-width: 2px !important;
+    box-shadow: none !important;
+}
+
+.audio-jogo .wrap {
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+.balao-mascote {
+    border-width: 1px !important;
+    padding: 16px !important;
+}
+
+.balao-mascote::before {
+    display: none;
+}
+
+.gradio-container button:focus-visible,
+.gradio-container a:focus-visible {
+    outline: 3px solid var(--eco-destaque);
+    outline-offset: 3px;
+}
+
+.gradio-container button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+    .gradio-container {
+        padding: 12px !important;
+    }
+
+    .gradio-container p,
+    .gradio-container .prose p {
+        font-size: 16px;
+    }
+
+    #cabecalho-ecoleitura h1 {
+        font-size: 26px;
+    }
+
+    .etapas-leitura li {
+        padding: 10px 4px;
+        gap: 4px;
+        font-size: 14px;
+    }
+
+    #galeria-mascotes .grid-container {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    #atividades-ecoleitura .tab-nav button {
+        padding: 10px 12px !important;
+        font-size: 16px !important;
+    }
 }

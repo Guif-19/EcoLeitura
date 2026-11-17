@@ -32,6 +32,7 @@ from servicos import gerar_texto
 from fonetica import criar_aba_fonetica
 from missoes import criar_aba_missoes
 from autenticacao import criar_app
+from falhas import mensagem_falha
 
 
 # ----------------------------- CONFIGURAÇÕES -----------------------------
@@ -136,14 +137,14 @@ def transcrever_audio(caminho_audio):
         raise gr.Error("Grave sua leitura ou envie um arquivo de áudio. Caso tenha gravado, verifique se apertou o botão PARAR")
 
 
-    modelo = obter_modelo_whisper()
-    segmentos, info = modelo.transcribe(
-        caminho_audio,
-        language="pt",
-        beam_size=5,
-        vad_filter=True,
-    )
-    transcricao = " ".join(segmento.text.strip() for segmento in segmentos).strip()
+    try:
+        modelo = obter_modelo_whisper()
+        segmentos, info = modelo.transcribe(
+            caminho_audio, language="pt", beam_size=5, vad_filter=True,
+        )
+        transcricao = " ".join(segmento.text.strip() for segmento in segmentos).strip()
+    except Exception as erro:
+        raise gr.Error(mensagem_falha("abrir a gravação", erro)) from erro
 
     if not transcricao:
         raise gr.Error(
@@ -258,15 +259,17 @@ def colorir_transcricao(texto_original, transcricao):
 
 # ----------------------------- EVENTOS DA INTERFACE -----------------------------
 
-def gerar_e_atualizar(tema, nivel, historico):
+def gerar_e_atualizar(tema, nivel, historico, progress=gr.Progress()):
+    progress(None, desc="Preparando sua leitura…")
     texto = gerar_texto(tema, nivel, historico)
     return texto, "Texto gerado! Agora leia em voz alta e grave sua leitura."
 
 
-def processar_leitura(audio, texto_original, tema, nivel, historico, nome_mascote):
+def processar_leitura(audio, texto_original, tema, nivel, historico, nome_mascote, progress=gr.Progress()):
     if not texto_original or not texto_original.strip():
         raise gr.Error("Primeiro, gere um texto ambiental.")
 
+    progress(None, desc="Ouvindo a gravação e conferindo as palavras…")
     transcricao = transcrever_audio(audio)
     transcricao_colorida = colorir_transcricao(
         texto_original,
@@ -332,12 +335,33 @@ def processar_leitura(audio, texto_original, tema, nivel, historico, nome_mascot
     )
 
 
-def limpar_atividade():
-    return ( "", None, "", "", [], [], gr.update(value=None, visible=False), ""
-    )
+def limpar_atividade(historico=None):
+    """Começa outra leitura, preservando as conquistas desta sessão."""
+    historico = list(historico or [])
+    tabela = [[item["data"], item["tema"], item["nivel"], item["resultado"], item["mensagem"]] for item in historico]
+    return "", None, "", "", tabela, historico, gr.update(value=None, visible=False), ""
+
+
+def estado_gravacao(texto, audio):
+    pronto = bool((texto or "").strip() and audio)
+    mensagem = "Gravação pronta. Você pode ouvir, refazer ou conferir sua leitura." if pronto else "Toque em Gravar, leia o texto e pare a gravação. Depois, confira sua leitura."
+    return gr.update(interactive=pronto), mensagem
+
+
+def etapas_leitura(etapa):
+    nomes = ["Preparar", "Gravar", "Resultado"]
+    return '<ol class="etapas-leitura" aria-label="Etapas da leitura">' + "".join(
+        f'<li class="{"ativa" if i == etapa else ""}" {"aria-current=step" if i == etapa else ""}><span>{i + 1}</span>{nome}</li>'
+        for i, nome in enumerate(nomes)
+    ) + "</ol>"
+
+
+def mostrar_usuario(request: gr.Request):
+    usuario = html.escape(request.username or "visitante")
+    return f'<p class="conta-conectada">Conectado como <strong>{usuario}</strong></p>'
 
 def escolher_mascote(selecao):
-    if selecao is None:
+    if not isinstance(selecao, int) or not 0 <= selecao < len(MASCOTES):
         raise gr.Error("Escolha um amigo da natureza para continuar.")
 
     nome = list(MASCOTES.keys())[selecao]
@@ -387,9 +411,9 @@ def reacao_mascote(nome_mascote, percentual):
 
     elif percentual <= 50:
         mensagem = (
-            f"### {nome_mascote} ficou um pouquinho triste.\n\n"
-            "Ainda precisamos praticar um pouquinho mais. "
-            "Não desista! Eu acredito em você!"
+            f"### {nome_mascote} vai praticar com você!\n\n"
+            "Vamos ouvir a gravação e tentar com calma. "
+            "O reconhecimento também pode errar."
         )
 
     else:
@@ -446,319 +470,155 @@ with open(CAMINHO_CSS, "r", encoding="utf-8") as arquivo:
     
 
 
-with gr.Blocks(
-    title="EcoLeitura — Alfabetização e Meio Ambiente", 
-    ) as demo:
+with gr.Blocks(title="EcoLeitura — Alfabetização e Meio Ambiente") as demo:
     historico_state = gr.State([])
     mascote_state = gr.State(None)
     indice_mascote_state = gr.State(None)
 
-
     with gr.Row(elem_id="cabecalho-ecoleitura"):
+        with gr.Column(scale=1):
+            gr.Markdown("# 🌱 EcoLeitura")
+            conta = gr.HTML()
+        gr.Button("Sair", link="/logout?all_session=false", size="sm", min_width=80, scale=0)
+    demo.load(mostrar_usuario, outputs=[conta])
+
+    with gr.Accordion("Como usar o EcoLeitura", open=False, elem_classes="ajuda-contextual"):
         gr.Markdown(
-            """
-            # 🌱 EcoLeitura
-            ### Melhorando a leitura, cuidando do planeta!
-            """
-        )
-        gr.Button(
-            "Sair",
-            link="/logout?all_session=false",
-            variant="secondary",
-            size="sm",
-            min_width=90,
-            scale=0,
-            elem_id="sair-ecoleitura",
+            "**Leitura:** prepare um texto, grave a leitura e confira o retorno.\n\n"
+            "**Palavras:** escolha uma palavra, ouça um exemplo se precisar e grave sua tentativa.\n\n"
+            "**Missões:** leia uma história e escreva sua ideia para ajudar a natureza.\n\n"
+            "Se o microfone não estiver disponível, você pode enviar um arquivo de áudio. "
+            "Peça ajuda a um adulto para permitir o uso do microfone."
         )
 
-    with gr.Tabs():
+    with gr.Tabs(elem_id="atividades-ecoleitura"):
+        with gr.Tab("Leitura"):
+            gr.Markdown("## Leitura ambiental\nPrepare um texto, leia em voz alta e pratique com a gente.")
+            etapas = gr.HTML(etapas_leitura(0))
 
-        with gr.Tab("Leitura Ambiental"):
-
-            gr.Markdown(
-                    """
-                    Gere um texto ambiental com IA, leia em voz alta e receba um retorno automático
-                    para apoiar sua prática de leitura.
-                    """
-                )
-
-            gr.Markdown("## Escolha seu amigo da natureza!")
-
-            with gr.Column(visible=True) as area_selecao_mascote:
-
-                gr.Markdown(
-                    "Escolha um amigo da natureza para acompanhar "
-                    "suas missões de leitura."
-                )
-
-                mascote = gr.Gallery(
-                    value=IMAGENS_MASCOTES,
-                    label="Escolha seu companheiro de aventura",
-                    columns=4,
-                    height=560,
-                    object_fit="contain",
-                    allow_preview=False,
-                    interactive=False,
-                     elem_id="galeria-mascotes"
-                )
-
-                confirmar_mascote = gr.Button(
-                    "Escolher amigo",
-                    variant="primary"
-                )
-
-
-            with gr.Column(visible=False) as area_mascote_escolhido:
-
-                imagem_mascote_escolhido = gr.Image(
-                    show_label=False,
-                    height=200,
-                    interactive=False,
-                    container=False
-                )
-
-                mensagem_mascote = gr.Markdown()
-
-                reescolher_btn = gr.Button(
-                    "Escolher outro amigo da natureza",
-                    variant="secondary"
-                )
-
-
-                gr.Markdown(
-                    """
-                    ## Prepare sua aventura
-                    Escolha o assunto que deseja explorar e
-                    o nível de dificuldade da sua leitura.
-                    """
-                )
-
-            with gr.Group():
-                with gr.Row():
-                    tema = gr.Dropdown(
-                        choices=TEMAS,
-                        value=TEMAS[0],
-                        label="Qual tema você quer explorar?"
+            with gr.Accordion("Escolher um amigo da natureza (opcional)", open=False, elem_id="amigos-ecoleitura"):
+                with gr.Column() as area_selecao_mascote:
+                    gr.Markdown("Toque em um personagem e depois em **Escolher amigo**.")
+                    mascote = gr.Gallery(
+                        value=IMAGENS_MASCOTES, label="Amigos da natureza", columns=4,
+                        height="auto", object_fit="contain", allow_preview=False,
+                        interactive=False, buttons=[], elem_id="galeria-mascotes",
                     )
+                    selecao_mascote = gr.Markdown("Nenhum amigo selecionado ainda.")
+                    confirmar_mascote = gr.Button("Escolher amigo", interactive=False)
+                with gr.Column(visible=False) as area_mascote_escolhido:
+                    imagem_mascote_escolhido = gr.Image(show_label=False, height=150, interactive=False, container=False)
+                    mensagem_mascote = gr.Markdown()
+                    reescolher_btn = gr.Button("Trocar amigo", visible=False)
 
-                    nivel = gr.Radio(
-                        choices=NIVEIS,
-                        value="Iniciante",
-                        label="Escolha seu nível de leitura"
-                    )
-            
+            with gr.Row():
+                tema = gr.Dropdown(choices=TEMAS, value=TEMAS[0], label="Assunto")
+                nivel = gr.Radio(choices=NIVEIS, value="Iniciante", label="Nível de leitura")
+            gerar_btn = gr.Button("Preparar leitura", variant="primary")
+            status_geracao = gr.Markdown("Escolha o assunto e toque em **Preparar leitura**.")
 
-            gr.Markdown(
-                """
-                ##  Sua missão de leitura
-                Prepare-se para descobrir algo novo sobre a natureza!
-                """
-            )
-
-            with gr.Group():
-                gerar_btn = gr.Button(
-                    "Começar missão de leitura - Gere um texto com a IA",
-                    variant="primary"
-                )
-
-                status_geracao = gr.Markdown()
-
+            with gr.Column(visible=False) as area_gravacao:
+                gr.Markdown("### 2. Grave sua leitura")
                 texto_original = gr.Textbox(
-                    label="Leia o texto abaixo com atenção",
-                    lines=5,
-                    placeholder="Sua missão de leitura aparecerá aqui.",
-                    elem_id="texto-leitura"
+                    label="Seu texto", lines=4, interactive=False,
+                    elem_id="texto-leitura",
                 )
-
-            gr.Markdown("---")
-            gr.Markdown(
-                """
-                ##  Desafio da leitura
-                Chegou a hora de mostrar suas habilidades!
-                Leia o texto em voz alta e grave sua leitura.
-                """
-            )
-
-            with gr.Group():
-                audio = gr.Audio(
-                    sources=["microphone", "upload"],
-                    type="filepath",
-                    label="Grave sua leitura aqui", 
-                    elem_classes="audio-jogo"
-                )
-
-                avaliar_btn = gr.Button(
-                    "Concluir desafio - Vamos avaliar sua leitura?",
-                    variant="primary"
-                )
-
-                transcricao = gr.HTML(
-                    value="""
-                    <div class="resultado-transcricao">
-                        <strong>O que foi reconhecido na sua leitura</strong>
-                        <p>A transcrição aparecerá aqui após a avaliação.</p>
-                    </div>
-                    """
-                )
-
-            gr.Markdown(
-                """
-                ##   Suas conquistas
-                Veja como foi sua aventura de leitura!
-                Cada atividade é uma oportunidade de aprender.
-                """
-            )
+                gr.Markdown("Toque em **Gravar**, leia o texto e toque em **Parar**. Você pode ouvir e refazer antes de conferir.")
+                audio = gr.Audio(sources=["microphone", "upload"], type="filepath", label="Sua gravação", elem_classes="audio-jogo")
+                status_gravacao = gr.Markdown()
+                gr.Markdown("A primeira análise pode levar mais tempo para preparar o reconhecedor.", elem_classes="nota-atividade")
+                avaliar_btn = gr.Button("Conferir minha leitura", variant="primary", interactive=False)
 
             with gr.Column(visible=False) as area_conquistas:
+                gr.Markdown("### 3. Veja seu resultado")
+                with gr.Row(elem_classes="area-mascote"):
+                    imagem_resultado_mascote = gr.Image(show_label=False, height=150, interactive=False, visible=False, container=False, elem_classes="imagem-mascote")
+                    mensagem_resultado_mascote = gr.Markdown(elem_classes="balao-mascote")
+                transcricao = gr.HTML()
+                with gr.Accordion("Detalhes da leitura para o responsável", open=False):
+                    relatorio = gr.Markdown()
+                limpar_btn = gr.Button("Nova leitura")
 
-                with gr.Group():
-                    with gr.Row(elem_classes=["area-mascote"]):
-                        imagem_resultado_mascote = gr.Image(
-                            show_label=False,
-                            height=180,
-                            interactive=False,
-                            visible=False,
-                            container=False,
-                            elem_classes=["imagem-mascote"]
-                        )
-
-                        mensagem_resultado_mascote = gr.Markdown(
-                            elem_classes=["balao-mascote"]
-                        )
-
-                    relatorio = gr.Markdown(
-                        "O resultado da sua missão aparecerá aqui."
-                    )
-
-                    gr.Markdown("### Histórico das suas aventuras")
-
-                    tabela_historico = gr.Dataframe(
-                        headers=["Data", "Tema", "Nível", "Resultado", "Feedback"],
-                        datatype=["str", "str", "str", "str", "str"],
-                        interactive=False,
-                        wrap=True,
-                        label="Missões realizadas"
-                    )
-
-                    limpar_btn = gr.Button(
-                        "Começar uma nova aventura",
-                        variant="secondary"
-                    )
-
-                gr.Markdown(
-                    """
-                    ---
-                    <small>
-                    AVISO: ferramenta experimental para apoio à alfabetização. O reconhecimento
-                    automático pode errar, especialmente com vozes infantis, sotaques e ruídos.
-                    A atividade deve ser acompanhada por um adulto/educador. O áudio é processado
-                    durante a atividade e não é salvo por este código.
-                    </small>
-                    """
+            with gr.Accordion("Histórico desta sessão", open=False):
+                gr.Markdown("Estas atividades ficam disponíveis nesta sessão. O progresso ainda não é salvo na conta.", elem_classes="nota-atividade")
+                tabela_historico = gr.Dataframe(
+                    headers=["Data", "Assunto", "Nível", "Resultado", "Retorno"],
+                    datatype=["str", "str", "str", "str", "str"],
+                    interactive=False, wrap=True, label="Leituras desta sessão",
                 )
+            gr.Markdown("O reconhecimento automático pode errar. Use o retorno para praticar com um adulto; ele não confirma cada som da pronúncia.", elem_classes="nota-atividade")
 
-                gerar_btn.click(
-                    fn=gerar_e_atualizar,
-                    inputs=[tema, nivel, historico_state],
-                    outputs=[texto_original, status_geracao],
-                )
+            def selecionar_amigo(evt: gr.SelectData):
+                indice = evt.index
+                nome = list(MASCOTES)[indice]
+                return indice, f"**{nome}:** {HISTORIAS_MASCOTES[nome]}", gr.update(interactive=True)
 
-                avaliar_btn.click(
-                    fn=processar_leitura,
-                    inputs=[
-                        audio,
-                        texto_original,
-                        tema,
-                        nivel,
-                        historico_state,
-                        mascote_state
-                    ],
-                    outputs=[
-                        transcricao,
-                        relatorio,
-                        tabela_historico,
-                        historico_state,
-                        imagem_resultado_mascote,
-                        mensagem_resultado_mascote
-                    ],
-                ).success(
-                    fn=lambda: gr.update(visible=True),
-                    outputs=[area_conquistas]
-                )
+            mascote.select(selecionar_amigo, outputs=[indice_mascote_state, selecao_mascote, confirmar_mascote])
+            confirmar_mascote.click(
+                escolher_mascote, inputs=[indice_mascote_state],
+                outputs=[mascote_state, mensagem_mascote, area_selecao_mascote, area_mascote_escolhido, imagem_mascote_escolhido, reescolher_btn],
+            )
+            reescolher_btn.click(
+                reescolher_mascote,
+                outputs=[area_selecao_mascote, area_mascote_escolhido, imagem_mascote_escolhido, reescolher_btn, mascote_state, mensagem_mascote, indice_mascote_state],
+            ).then(lambda: ("Escolha outro amigo.", gr.update(interactive=False)), outputs=[selecao_mascote, confirmar_mascote], queue=False)
 
-                mascote.select(
-                    fn=registrar_selecao,
-                    outputs=[indice_mascote_state]
+            inicio_geracao = gerar_btn.click(
+                lambda: (gr.update(interactive=False), "Preparando sua leitura…", gr.update(interactive=False), gr.update(interactive=False), gr.update(interactive=False), gr.update(interactive=False)),
+                outputs=[gerar_btn, status_geracao, avaliar_btn, audio, tema, nivel], queue=False,
+            )
+            geracao = inicio_geracao.then(
+                gerar_e_atualizar, inputs=[tema, nivel, historico_state],
+                outputs=[texto_original, status_geracao], concurrency_id="leitura", concurrency_limit=1,
+            )
+            geracao.success(
+                lambda: (gr.update(visible=True), gr.update(value=None, interactive=True), gr.update(interactive=False), gr.update(visible=False), etapas_leitura(1), "Grave sua leitura para continuar."),
+                outputs=[area_gravacao, audio, avaliar_btn, area_conquistas, etapas, status_gravacao],
+            )
+            geracao.failure(lambda: "Não foi possível preparar o texto. Tente novamente ou peça ajuda ao responsável.", outputs=[status_geracao], queue=False)
+            geracao.failure(lambda t, a: (gr.update(interactive=bool(t and a)), gr.update(interactive=not bool(t)), gr.update(interactive=not bool(t))), inputs=[texto_original, audio], outputs=[avaliar_btn, tema, nivel], queue=False)
+            geracao.then(lambda: (gr.update(interactive=True), gr.update(interactive=True)), outputs=[gerar_btn, audio], queue=False)
+
+            audio.change(estado_gravacao, inputs=[texto_original, audio], outputs=[avaliar_btn, status_gravacao], queue=False)
+            audio.start_recording(lambda: "Gravando… leia com calma e toque em Parar quando terminar.", outputs=[status_gravacao], queue=False)
+
+            inicio_avaliacao = avaliar_btn.click(
+                lambda: (gr.update(interactive=False), gr.update(interactive=False), "Ouvindo sua gravação…", gr.update(interactive=False)),
+                outputs=[avaliar_btn, audio, status_gravacao, gerar_btn], queue=False,
+            )
+            avaliacao = inicio_avaliacao.then(
+                processar_leitura,
+                inputs=[audio, texto_original, tema, nivel, historico_state, mascote_state],
+                outputs=[transcricao, relatorio, tabela_historico, historico_state, imagem_resultado_mascote, mensagem_resultado_mascote],
+                concurrency_id="leitura", concurrency_limit=1,
+            )
+            avaliacao.success(
+                lambda: (gr.update(visible=True), etapas_leitura(2), "Leitura conferida. Veja seu resultado abaixo."),
+                outputs=[area_conquistas, etapas, status_gravacao],
+            )
+            avaliacao.failure(lambda: "Não conseguimos conferir esta gravação. Você pode ouvir, refazer ou enviar outro arquivo.", outputs=[status_gravacao], queue=False)
+            avaliacao.then(
+                lambda t, a: (gr.update(interactive=bool(t and a)), gr.update(interactive=True), gr.update(interactive=True)),
+                inputs=[texto_original, audio], outputs=[avaliar_btn, audio, gerar_btn], queue=False,
+            )
+            limpar_btn.click(
+                limpar_atividade, inputs=[historico_state],
+                outputs=[texto_original, audio, transcricao, relatorio, tabela_historico, historico_state, imagem_resultado_mascote, mensagem_resultado_mascote],
+            ).then(
+                lambda: (gr.update(visible=False), gr.update(visible=False), gr.update(interactive=False), etapas_leitura(0), "Seu histórico foi mantido. Prepare outra leitura.", gr.update(interactive=True), gr.update(interactive=True)),
+                outputs=[area_gravacao, area_conquistas, avaliar_btn, etapas, status_geracao, tema, nivel], queue=False,
             )
 
-                confirmar_mascote.click(
-                    fn=escolher_mascote,
-                    inputs=[indice_mascote_state],
-                    outputs=[
-                        mascote_state,
-                        mensagem_mascote,
-                        area_selecao_mascote,
-                        area_mascote_escolhido,
-                        imagem_mascote_escolhido,
-                        reescolher_btn
-                    ]
-                )
-
-                reescolher_btn.click(
-                    fn=reescolher_mascote,
-                    inputs=[],
-                    outputs=[
-                        area_selecao_mascote,
-                        area_mascote_escolhido,
-                        imagem_mascote_escolhido,
-                        reescolher_btn,
-                        mascote_state,
-                        mensagem_mascote,
-                        indice_mascote_state
-                    ]
-                )
-
-                limpar_btn.click(
-                    fn=limpar_atividade,
-                    inputs=[],
-                    outputs=[
-                        texto_original,
-                        audio,
-                        transcricao,
-                        relatorio,
-                        tabela_historico,
-                        historico_state,
-                        imagem_resultado_mascote,
-                        mensagem_resultado_mascote
-                    ],
-                )
-        
-        with gr.Tab("Aprendendo Palavras"):
+        with gr.Tab("Palavras"):
             criar_aba_fonetica(transcrever_audio, mascote_state)
-
-        with gr.Tab("Missões- Salve o meio ambiente"):
+        with gr.Tab("Missões"):
             criar_aba_missoes(mascote_state)
 
 
 if __name__ == "__main__":
     app = criar_app(
-        demo,
-        theme=gr.themes.Soft(),
-        css=CSS,
-        allowed_paths=[
-            os.path.join(
-                os.path.dirname(os.path.abspath(__file__)),
-                "imagens"
-            ),
-            os.path.join(
-                os.path.dirname(os.path.abspath(__file__)),
-                "imagens_palavras"
-            ),
-            PASTA_MASCOTES
-        ]
+        demo, theme=gr.themes.Soft(primary_hue="green", secondary_hue="green"), css=CSS,
+        footer_links=[],
+        allowed_paths=[str(Path(__file__).parent / "imagens"), str(Path(__file__).parent / "imagens_palavras"), PASTA_MASCOTES],
     )
-    uvicorn.run(
-        app,
-        host=os.getenv("GRADIO_SERVER_NAME", "127.0.0.1"),
-        port=int(os.getenv("GRADIO_SERVER_PORT", "7860")),
-    )
+    uvicorn.run(app, host=os.getenv("GRADIO_SERVER_NAME", "127.0.0.1"), port=int(os.getenv("GRADIO_SERVER_PORT", "7860")))
