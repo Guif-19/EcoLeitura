@@ -544,6 +544,7 @@ with gr.Blocks(title="EcoLeitura — Alfabetização e Meio Ambiente") as demo:
                 tabela_historico = gr.Dataframe(
                     headers=["Data", "Assunto", "Nível", "Resultado", "Retorno"],
                     datatype=["str", "str", "str", "str", "str"],
+                    column_widths=[150, 240, 150, 110, 360],
                     interactive=False, wrap=True, label="Leituras desta sessão",
                 )
             gr.Markdown("O reconhecimento automático pode errar. Use o retorno para praticar com um adulto; ele não confirma cada som da pronúncia.", elem_classes="nota-atividade")

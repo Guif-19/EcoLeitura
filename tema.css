@@ -128,7 +128,7 @@ html, body {
     --table-odd-background-fill: var(--eco-suave);
 }
 
-:root[data-ecoleitura-tema] .gradio-container input,
+:root[data-ecoleitura-tema] .gradio-container input:not([type="radio"]):not([type="checkbox"]):not([type="range"]),
 :root[data-ecoleitura-tema] .gradio-container textarea {
     color: var(--eco-texto) !important;
     background-color: var(--eco-campo) !important;
