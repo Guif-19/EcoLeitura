@@ -617,11 +617,40 @@ body {
     font-weight: bold;
 }
 
+#amigos-ecoleitura {
+    padding: 20px !important;
+    border: 2px solid var(--eco-destaque) !important;
+    border-radius: 20px !important;
+    background: var(--eco-suave) !important;
+}
+
+#amigos-ecoleitura h3 {
+    margin: 0 0 8px;
+    font-size: 24px;
+    line-height: 1.3;
+}
+
+#amigos-ecoleitura > .gr-group {
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+#amigo-escolhido {
+    align-items: center;
+}
+
 #galeria-mascotes,
+#galeria-mascotes .grid-wrap,
 #galeria-mascotes .grid-container,
 #galeria-palavras .grid-container {
     height: auto !important;
     max-height: none !important;
+}
+
+#galeria-mascotes .grid-wrap {
+    overflow: visible !important;
 }
 
 #galeria-mascotes .grid-container {
@@ -720,6 +749,14 @@ body {
 
     #galeria-mascotes .grid-container {
         grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    #amigos-ecoleitura {
+        padding: 12px !important;
+    }
+
+    #amigos-ecoleitura h3 {
+        font-size: 22px;
     }
 
     #atividades-ecoleitura .tab-nav button {

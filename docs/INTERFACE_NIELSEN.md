@@ -8,7 +8,7 @@ Implementação da revisão de 17/11/2026. Os identificadores abaixo corresponde
 | A02 — Reinício apaga histórico | Nova leitura limpa a atividade atual e conserva as leituras anteriores da sessão. |
 | A03 — Galeria móvel | Duas colunas no celular, quatro no computador, legendas com quebra de linha e confirmação textual da seleção. |
 | A04 — Atividades ocultas | Abas curtas Leitura, Palavras e Missões, com títulos completos dentro de cada atividade. |
-| A05 — Excesso na primeira tela | Mascote e ajuda opcionais recolhidos; gravação e resultado aparecem conforme a atividade avança. Detalhes ficam em área expansível para o responsável. |
+| A05 — Excesso na primeira tela | A escolha do amigo, parte central do projeto, fica aberta em um painel de destaque antes da preparação. Após confirmar, a galeria dá lugar ao amigo escolhido. Ajuda e detalhes do responsável ficam recolhidos; gravação e resultado aparecem conforme a atividade avança. |
 | A06 — Espera pouco clara | Mensagens específicas de preparação e análise; bloqueio temporário de ações e aviso sobre a primeira análise de áudio. Sem porcentagens de processamento inventadas. |
 | A07 — Ajuda de áudio tardia | Ouvir um exemplo disponível assim que a palavra é escolhida. |
 | A08 — Erros técnicos | Mensagens curtas com orientação para tentar novamente; detalhes das falhas no servidor. Controles principais em português e rodapé técnico oculto. |

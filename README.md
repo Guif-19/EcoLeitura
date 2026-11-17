@@ -124,7 +124,7 @@ Interface do MVP
 - As abas **Leitura**, **Palavras** e **Missões** ficam visíveis também no celular.
 - Em Leitura, siga **Preparar → Gravar → Resultado**. A gravação aparece depois de preparar o texto; a conferência é habilitada quando houver áudio.
 - **Nova leitura** limpa o exercício atual e preserva o **Histórico desta sessão**. Recarregar a página ou sair pode encerrar esse histórico; ele ainda não é salvo na conta.
-- A escolha do amigo da natureza é opcional. No celular, a galeria usa duas colunas e a descrição aparece ao selecionar o personagem.
+- A escolha do amigo da natureza fica aberta em um painel de destaque antes da preparação da leitura. No celular, a galeria usa duas colunas e a descrição aparece ao selecionar o personagem. Após confirmar, o amigo escolhido permanece visível e pode ser trocado.
 - **Ouvir um exemplo** fica disponível antes da primeira tentativa em Palavras.
 - Falhas de serviços exibem orientação para tentar novamente; detalhes técnicos ficam no servidor.
 - Consulte o [registro das melhorias de Nielsen](docs/INTERFACE_NIELSEN.md) para o escopo e os limites da revisão.

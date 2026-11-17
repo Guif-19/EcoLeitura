@@ -484,7 +484,7 @@ with gr.Blocks(title="EcoLeitura — Alfabetização e Meio Ambiente") as demo:
 
     with gr.Accordion("Como usar o EcoLeitura", open=False, elem_classes="ajuda-contextual"):
         gr.Markdown(
-            "**Leitura:** prepare um texto, grave a leitura e confira o retorno.\n\n"
+            "**Leitura:** escolha seu amigo, prepare um texto, grave a leitura e confira o retorno.\n\n"
             "**Palavras:** escolha uma palavra, ouça um exemplo se precisar e grave sua tentativa.\n\n"
             "**Missões:** leia uma história e escreva sua ideia para ajudar a natureza.\n\n"
             "Se o microfone não estiver disponível, você pode enviar um arquivo de áudio. "
@@ -493,24 +493,29 @@ with gr.Blocks(title="EcoLeitura — Alfabetização e Meio Ambiente") as demo:
 
     with gr.Tabs(elem_id="atividades-ecoleitura"):
         with gr.Tab("Leitura"):
-            gr.Markdown("## Leitura ambiental\nPrepare um texto, leia em voz alta e pratique com a gente.")
-            etapas = gr.HTML(etapas_leitura(0))
+            gr.Markdown("## Leitura ambiental\nEscolha um amigo para acompanhar sua leitura e pratique com a gente.")
 
-            with gr.Accordion("Escolher um amigo da natureza (opcional)", open=False, elem_id="amigos-ecoleitura"):
+            with gr.Group(elem_id="amigos-ecoleitura"):
                 with gr.Column() as area_selecao_mascote:
-                    gr.Markdown("Toque em um personagem e depois em **Escolher amigo**.")
+                    gr.Markdown(
+                        "### 🌿 Escolha seu amigo da natureza\n"
+                        "Ele vai acompanhar você nesta aventura! Toque em um personagem e depois em **Escolher amigo**."
+                    )
                     mascote = gr.Gallery(
                         value=IMAGENS_MASCOTES, label="Amigos da natureza", columns=4,
                         height="auto", object_fit="contain", allow_preview=False,
                         interactive=False, buttons=[], elem_id="galeria-mascotes",
                     )
                     selecao_mascote = gr.Markdown("Nenhum amigo selecionado ainda.")
-                    confirmar_mascote = gr.Button("Escolher amigo", interactive=False)
+                    confirmar_mascote = gr.Button("Escolher amigo", variant="primary", interactive=False)
                 with gr.Column(visible=False) as area_mascote_escolhido:
-                    imagem_mascote_escolhido = gr.Image(show_label=False, height=150, interactive=False, container=False)
-                    mensagem_mascote = gr.Markdown()
-                    reescolher_btn = gr.Button("Trocar amigo", visible=False)
+                    with gr.Row(elem_id="amigo-escolhido"):
+                        imagem_mascote_escolhido = gr.Image(show_label=False, height=160, width=160, min_width=140, scale=0, interactive=False, container=False, buttons=[])
+                        with gr.Column():
+                            mensagem_mascote = gr.Markdown()
+                            reescolher_btn = gr.Button("Trocar amigo", visible=False)
 
+            etapas = gr.HTML(etapas_leitura(0))
             with gr.Row():
                 tema = gr.Dropdown(choices=TEMAS, value=TEMAS[0], label="Assunto")
                 nivel = gr.Radio(choices=NIVEIS, value="Iniciante", label="Nível de leitura")
@@ -532,7 +537,7 @@ with gr.Blocks(title="EcoLeitura — Alfabetização e Meio Ambiente") as demo:
             with gr.Column(visible=False) as area_conquistas:
                 gr.Markdown("### 3. Veja seu resultado")
                 with gr.Row(elem_classes="area-mascote"):
-                    imagem_resultado_mascote = gr.Image(show_label=False, height=150, interactive=False, visible=False, container=False, elem_classes="imagem-mascote")
+                    imagem_resultado_mascote = gr.Image(show_label=False, height=150, interactive=False, visible=False, container=False, buttons=[], elem_classes="imagem-mascote")
                     mensagem_resultado_mascote = gr.Markdown(elem_classes="balao-mascote")
                 transcricao = gr.HTML()
                 with gr.Accordion("Detalhes da leitura para o responsável", open=False):
