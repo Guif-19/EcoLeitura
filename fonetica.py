@@ -11,6 +11,7 @@ import re
 
 import gradio as gr
 from gtts import gTTS
+from falhas import mensagem_falha
 
 PASTA_IMAGENS = Path(__file__).resolve().parent / "imagens_palavras"
 PASTA_MASCOTES = Path(__file__).resolve().parent / "mascotes"
@@ -19,7 +20,7 @@ PALAVRAS = [
     "AQUECIMENTO",
     "ENERGIA",
     "DESPERDÍCIO",
-    "PASSAROS",
+    "PÁSSAROS",
     "OCEANO",
     "DESMATAMENTO",
     "QUEIMADAS",
@@ -41,14 +42,14 @@ PALAVRAS = [
 
 # Nome da imagem (sem extensão) de cada palavra.
 ARQUIVOS = {
-    "AQUECIMENTO": "aquecimento", "PASSAROS": "passaros", "OCEANO": "oceano", 
+    "AQUECIMENTO": "aquecimento", "PÁSSAROS": "passaros", "OCEANO": "oceano",
     "ENERGIA": "energia",
     "DESPERDÍCIO": "desperdicio", "ÁRVORE": "arvore",
     "FOLHA": "folha", "PLANTA": "planta", "CHUVA": "chuva",
     "TERRA": "terra", "PEIXE": "peixe", "FLORESTA": "floresta",
     "NATUREZA": "natureza", "RECICLAGEM": "reciclagem",
     "SEMENTE": "semente", "POLUIÇÃO": "poluicao", "AMBIENTE": "ambiente",
-    "DESMATAMENTO": "desmatamento","QUEIMADAS": "queimadas", 
+    "DESMATAMENTO": "desmatamento","QUEIMADAS": "queimadas",
     "REFLORESTAMENTO": "reflorestamento","COMPOSTAGEM": "compostagem"
 }
 
@@ -68,7 +69,7 @@ def caminho_imagem(palavra):
     return None
 
 
-def nova_palavra(nivel, usadas):
+def nova_palavra(usadas):
     disponiveis = [p for p in PALAVRAS if caminho_imagem(p)]
 
     if len(disponiveis) < 4:
@@ -97,7 +98,7 @@ def nova_palavra(nivel, usadas):
     return (
         estado, usadas, palavra, None, "Grave sua leitura da palavra.",
         gr.update(visible=False, value=None),
-        gr.update(visible=False),
+        gr.update(visible=True, interactive=True),
         gr.update(value=imagens, visible=False),
         gr.update(value="", visible=False),
         ""
@@ -124,7 +125,7 @@ def feedback_mascote_fonetica(nome_mascote, acertou):
     classe = "mascote-pulando" if acertou else "mascote-triste"
 
     mensagem = (
-        "Muito Bem! Você leu corretamente!"
+        "Identificamos a palavra na sua gravação!"
         if acertou else
         "Vamos tentar novamente!"
     )
@@ -141,17 +142,17 @@ def feedback_mascote_fonetica(nome_mascote, acertou):
 def avaliar_pronuncia(audio, estado, transcrever_audio, nome_mascote):
     if not estado:
         raise gr.Error("Clique em 'Nova palavra' primeiro.")
-    
+
     if not audio:
         raise gr.Error("Grave a palavra antes de avaliar.")
-    
+
     reconhecido = transcrever_audio(audio)
     esperado = normalizar(estado["palavra"])
     obtido = normalizar(reconhecido)
 
     # Correspondência textual, não análise fonética de sons isolados.
     correto = obtido == esperado
-    
+
     novo_estado = dict(estado)
     novo_estado["pronuncia_ok"] = correto
 
@@ -168,7 +169,7 @@ def avaliar_pronuncia(audio, estado, transcrever_audio, nome_mascote):
 
     return (
         novo_estado, mensagem,
-        gr.update(visible=not correto),
+        gr.update(visible=True, interactive=True),
         gr.update(value=[
                 (caminho_imagem(p), f"Imagem {i + 1}")
                 for i, p in enumerate(novo_estado["alternativas"])
@@ -184,29 +185,29 @@ def ouvir_palavra(estado):
     try:
         with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as arquivo:
             destino = arquivo.name
-        gTTS(text=estado["palavra"].lower(), lang="pt", tld="com.br").save(destino)
+        gTTS(text=estado["palavra"].lower(), lang="pt", tld="com.br", timeout=15).save(destino)
         return gr.update(value=destino, visible=True)
     except Exception as erro:
-        raise gr.Error(f"Não foi possível gerar o áudio: {erro}")
+        raise gr.Error(mensagem_falha("ouvir a palavra", erro)) from erro
 
 
 def verificar_imagem(estado, evt: gr.SelectData):
     if not estado or not estado.get("pronuncia_ok"):
         return gr.update(
-            value="Primeiro, conclua a leitura da palavra.", 
+            value="Primeiro, conclua a leitura da palavra.",
             visible=True
         )
-    
+
     indice = evt.index
 
 
     if not isinstance(indice, int) or not 0 <= indice < len(estado["alternativas"]):
         return gr.update(
-            value="Selecione uma das imagens.", 
+            value="Selecione uma das imagens.",
             visible=True
         )
 
-    
+
     if estado["alternativas"][indice] == estado["palavra"]:
         return gr.update(
             value=(
@@ -221,60 +222,67 @@ def verificar_imagem(estado, evt: gr.SelectData):
     return gr.update(
         value=(
             '<div class="resultado-errado">'
-            '<h2>Você errou!</h2>'
-            '<p>Observe as imagens e tente novamente.</p>'
+            '<h2>Vamos tentar outra imagem?</h2>'
+            '<p>Observe as opções e escolha novamente.</p>'
             '</div>'
-        ), 
+        ),
         visible=True
     )
 
 
 def criar_aba_fonetica(transcrever_audio, mascote_state):
-    """Constrói a aba dentro de um contexto gr.Tab ou gr.Blocks já aberto."""
-    gr.Markdown("## Aprendendo Palavras")
-    gr.Markdown(
-        "Leia palavras relacionadas ao meio ambiente. "
-        "Se precisar, escute a pronúncia e tente novamente."
-    )
+    gr.Markdown("## Aprendendo palavras\nEscolha uma palavra, grave sua tentativa e encontre a imagem.")
     estado = gr.State(None)
     usadas = gr.State([])
     proxima = gr.Button("Nova palavra", variant="primary")
-    palavra = gr.Markdown("### Clique em nova palavra para começar", elem_id="palavra-fonetica")
-    audio = gr.Audio(sources=["microphone", "upload"], type="filepath",
-                     label="Grave sua leitura", elem_classes="audio-jogo")
-    avaliar = gr.Button("Verificar minha leitura")
-    reacao_fonetica = gr.HTML()
-    feedback = gr.Markdown()
-    
-    ouvir = gr.Button("Ouvir a palavra", visible=False)
-    audio_modelo = gr.Audio(label="Pronúncia da palavra", visible=False,
-                            interactive=False, autoplay=False)
-    imagens = gr.Gallery(
-    label="Escolha a imagem correspondente",
-    columns=2,
-    rows=2,
-    height=500,
-    object_fit="contain",
-    allow_preview=False,
-    visible=False,
-    elem_id="galeria-palavras"
+    with gr.Column(visible=False) as area_palavra:
+        palavra = gr.Markdown(elem_id="palavra-fonetica")
+        ouvir = gr.Button("Ouvir um exemplo", interactive=False)
+        audio_modelo = gr.Audio(label="Exemplo da palavra", visible=False, interactive=False, autoplay=False)
+        gr.Markdown("Você pode ouvir o exemplo para praticar. Depois, toque em **Gravar**, diga a palavra e toque em **Parar**.")
+        audio = gr.Audio(sources=["microphone", "upload"], type="filepath", label="Sua tentativa", elem_classes="audio-jogo")
+        status = gr.Markdown("Grave a palavra para continuar.")
+        avaliar = gr.Button("Conferir minha leitura", variant="primary", interactive=False)
+        reacao_fonetica = gr.HTML()
+        feedback = gr.Markdown()
+        imagens = gr.Gallery(
+            label="Encontre a imagem da palavra", columns=2, height="auto", object_fit="contain",
+            allow_preview=False, visible=False, buttons=[], elem_id="galeria-palavras",
+        )
+        resultado_imagem = gr.HTML(visible=False)
+    gr.Markdown("O reconhecimento pode errar. Você pode ouvir, refazer a gravação e tentar novamente.", elem_classes="nota-atividade")
+
+    def atualizar_gravacao(caminho, dados):
+        pronto = bool(caminho and dados)
+        return gr.update(interactive=pronto), "Gravação pronta. Confira sua leitura ou grave outra tentativa." if pronto else "Grave a palavra e pare a gravação para continuar."
+
+    def conferir(caminho, dados, mascote, progress=gr.Progress()):
+        progress(None, desc="Ouvindo sua palavra…")
+        return avaliar_pronuncia(caminho, dados, transcrever_audio, mascote)
+
+    saidas_nova = [estado, usadas, palavra, audio, feedback, audio_modelo, ouvir, imagens, resultado_imagem, reacao_fonetica]
+    proxima.click(nova_palavra, inputs=[usadas], outputs=saidas_nova).success(
+        lambda: (gr.update(visible=True), gr.update(interactive=False), "Ouça um exemplo se precisar e grave sua tentativa."),
+        outputs=[area_palavra, avaliar, status], queue=False,
     )
-
-    resultado_imagem = gr.HTML(visible=False)
-
-    saidas_nova = [estado, usadas, palavra, audio, feedback,
-                   audio_modelo, ouvir, imagens, resultado_imagem,
-                   reacao_fonetica]
-    
-    proxima.click(nova_palavra, inputs=[usadas], outputs=saidas_nova)
-    
-    avaliar.click(
-    lambda a, e, m: avaliar_pronuncia(a, e, transcrever_audio, m),
-    inputs=[audio, estado, mascote_state],
-    outputs=[estado, feedback, ouvir, imagens, reacao_fonetica]
-    )   
-    
-    ouvir.click(ouvir_palavra, inputs=[estado], outputs=[audio_modelo])
-    
+    audio.change(atualizar_gravacao, inputs=[audio, estado], outputs=[avaliar, status], queue=False)
+    audio.start_recording(lambda: "Gravando… diga a palavra e toque em Parar.", outputs=[status], queue=False)
+    inicio = avaliar.click(
+        lambda: (gr.update(interactive=False), gr.update(interactive=False), gr.update(interactive=False), "Ouvindo sua palavra…"),
+        outputs=[avaliar, audio, proxima, status], queue=False,
+    )
+    avaliacao = inicio.then(
+        conferir, inputs=[audio, estado, mascote_state],
+        outputs=[estado, feedback, ouvir, imagens, reacao_fonetica],
+        concurrency_id="palavras", concurrency_limit=1,
+    )
+    avaliacao.success(lambda: "Tentativa conferida. Veja a orientação abaixo.", outputs=[status], queue=False)
+    avaliacao.failure(lambda: "Não conseguimos conferir o áudio. Grave novamente ou envie outro arquivo.", outputs=[status], queue=False)
+    avaliacao.then(
+        lambda a, e: (gr.update(interactive=bool(a and e)), gr.update(interactive=True), gr.update(interactive=True)),
+        inputs=[audio, estado], outputs=[avaliar, audio, proxima], queue=False,
+    )
+    inicio_audio = ouvir.click(lambda: gr.update(interactive=False), outputs=[ouvir], queue=False)
+    reproducao = inicio_audio.then(ouvir_palavra, inputs=[estado], outputs=[audio_modelo])
+    reproducao.then(lambda: gr.update(interactive=True), outputs=[ouvir], queue=False)
     imagens.select(verificar_imagem, inputs=[estado], outputs=[resultado_imagem])
-    return None

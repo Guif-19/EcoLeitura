@@ -10,7 +10,7 @@ Funcionalidades
 - Apresenta palavras relacionadas à natureza e ao meio ambiente.
 - A criança grava a leitura de uma palavra.
 - O reconhecimento de fala verifica se a palavra foi identificada corretamente.
-- Quando a palavra não é reconhecida como esperado, a criança pode ouvir sua pronúncia por meio do gTTS e tentar novamente.
+- Assim que a palavra é escolhida, a criança pode ouvir um exemplo por meio do gTTS e praticar antes de gravar.
 - Quando a palavra é reconhecida, a criança identifica a imagem correspondente entre quatro opções.
 3. Missão: Salve o Meio Ambiente
 - A criança escolhe uma história pronta com um desafio ambiental.
@@ -33,13 +33,24 @@ Atenção: o projeto não é mais totalmente local. O reconhecimento de fala é 
 Estrutura do projeto
 EcoLeitura/
 ├── projeto.py              # Interface principal e integração das abas
+├── autenticacao.py         # Tela de cadastro e integração do login
+├── usuarios.py             # Contas locais e proteção das senhas
+├── dados/usuarios.sqlite3  # Banco local de contas (não publicar)
 ├── servicos.py             # Geração de textos com Gemini
 ├── fonetica.py             # Atividade Aprendendo Palavras
 ├── missoes.py              # Histórias prontas e avaliação de decisões
 ├── style.css               # Estilos da interface
+├── login.css               # Estilos da tela de entrada
+├── tema.py                 # Disponibiliza o tema em todas as páginas
+├── tema.css                # Paletas dos modos claro e escuro
+├── tema.js                 # Seletor de tema e preferência do navegador
+├── interface.js            # Ajuda de senha e adaptação dos controles
+├── falhas.py               # Mensagens de falha das atividades
+├── docs/INTERFACE_NIELSEN.md # Alterações da revisão de usabilidade
 ├── requirements.txt        # Dependências Python
 ├── .gitignore
 ├── .env                    # Chave de API local (não publicar)
+├── .env.example            # Modelo de configuração sem credenciais reais
 ├── mascotes/               # Imagens dos mascotes
 └── imagens_palavras/       # Imagens usadas na associação de palavras
 A estrutura pode incluir outras pastas de imagens e arquivos auxiliares conforme a versão do projeto.
@@ -55,11 +66,33 @@ No Windows (PowerShell):
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
-Caso as bibliotecas das novas funcionalidades ainda não estejam incluídas em requirements.txt, instale-as e atualize esse arquivo antes de publicar:
-python -m pip install google-genai python-dotenv gTTS gradio faster-whisper
-4. Configurar a API Gemini
-Crie um arquivo chamado .env na pasta do projeto e adicione:
+O projeto usa Gradio 6, integrado ao FastAPI para servir o cadastro e as atividades no mesmo endereço.
+O requirements.txt limita o PyAV a uma versão compatível com o faster-whisper. Se aparecer o erro `open() got an unexpected keyword argument 'metadata_errors'`, pare a aplicação e execute `python -m pip install -r requirements.txt` no ambiente virtual antes de reiniciar. A incompatibilidade está registrada no [repositório do faster-whisper](https://github.com/SYSTRAN/faster-whisper/issues/1589).
+4. Configurar a API Gemini e criar uma conta
+Para as atividades com Gemini, copie .env.example para .env na pasta do projeto e preencha:
+
+```dotenv
 GEMINI_API_KEY=SUA_CHAVE_AQUI
+```
+
+Para testar o cadastro e o login, não é necessário configurar uma chave Gemini:
+
+1. Inicie o aplicativo e abra http://127.0.0.1:7860.
+2. Clique em **Criar conta** na tela de entrada.
+3. Escolha um usuário e uma senha, confirme a senha e clique em **Criar minha conta**.
+4. Na confirmação, clique em **Entrar na minha conta** e faça o login.
+5. Use **Sair** para encerrar a sessão neste navegador.
+
+O usuário deve ter de 3 a 30 caracteres: letras sem acento, números, ponto, traço ou sublinhado. Maiúsculas e minúsculas são equivalentes no usuário. A senha deve ter entre 8 e 128 caracteres e diferencia maiúsculas e minúsculas.
+
+O banco SQLite é criado automaticamente em dados/usuarios.sqlite3. Cada conta é persistida localmente com um salt aleatório e um hash PBKDF2-SHA256; as senhas não são armazenadas em texto puro. Essa pasta é ignorada pelo Git e bloqueada no servidor de arquivos da aplicação. Reiniciar o aplicativo mantém as contas. Ao mover o projeto para outro computador, as contas não são transferidas pelo Git.
+
+O login usa as sessões nativas do Gradio para restringir também os endpoints das atividades. O histórico de leitura continua temporário, por sessão; o cadastro não salva o progresso das atividades.
+
+Este MVP tem cadastro, login e saída. Não inclui confirmação por e-mail, recuperação de senha, perfis de professor/aluno nem gestão de contas. O cadastro fica disponível a quem acessa a aplicação. Para publicação fora do ambiente de demonstração, será necessário revisar os controles de acesso.
+
+As variáveis ECOLEITURA_USUARIO e ECOLEITURA_SENHA da versão anterior não são mais usadas: os acessos são criados pela tela de cadastro. O arquivo .env continua reservado à configuração dos serviços, como a chave Gemini. Preserve uma chave existente ao editar esse arquivo.
+
 O arquivo servicos.py utiliza o modelo gemini-3.5-flash-lite na configuração atual. Verifique se o modelo configurado em missoes.py é o mesmo ou outro modelo disponível para sua chave. A disponibilidade de modelos pode mudar.
 
 Nunca publique a chave de API. Confira se o .gitignore contém:
@@ -78,6 +111,30 @@ python projeto.py
 Abra no navegador o endereço informado pelo Gradio, normalmente:
 
 http://127.0.0.1:7860
+
+Para executar os testes de cadastro, acesso, áudio e interface, na pasta do projeto:
+
+```powershell
+python -m unittest discover -s tests -v
+```
+
+Referência da autenticação: [documentação oficial do Gradio](https://www.gradio.app/guides/sharing-your-app#authentication).
+
+Interface do MVP
+- As abas **Leitura**, **Palavras** e **Missões** ficam visíveis também no celular.
+- Em Leitura, siga **Preparar → Gravar → Resultado**. A gravação aparece depois de preparar o texto; a conferência é habilitada quando houver áudio.
+- **Nova leitura** limpa o exercício atual e preserva o **Histórico desta sessão**. Recarregar a página ou sair pode encerrar esse histórico; ele ainda não é salvo na conta.
+- A escolha do amigo da natureza fica aberta em um painel de destaque antes da preparação da leitura. No celular, a galeria usa duas colunas e a descrição aparece ao selecionar o personagem. Após confirmar, o amigo escolhido permanece visível e pode ser trocado.
+- **Ouvir um exemplo** fica disponível antes da primeira tentativa em Palavras.
+- Falhas de serviços exibem orientação para tentar novamente; detalhes técnicos ficam no servidor.
+- Consulte o [registro das melhorias de Nielsen](docs/INTERFACE_NIELSEN.md) para o escopo e os limites da revisão.
+
+Modo claro e escuro
+- Use o botão **Modo escuro** ou **Modo claro**, no topo da página, para alternar a aparência.
+- A escolha fica salva neste navegador e vale para login, cadastro e todas as atividades.
+- Na primeira visita, o site acompanha a preferência de aparência do dispositivo.
+- A troca de tema acontece imediatamente, sem reiniciar a página ou apagar a atividade em andamento.
+
 Observações importantes
 - Na primeira execução, o faster-whisper pode baixar o modelo de reconhecimento de fala.
 - A avaliação de leitura compara o texto esperado com a transcrição automática. Não é uma medição fonética precisa, nem uma avaliação clínica ou diagnóstico.

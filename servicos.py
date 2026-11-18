@@ -6,6 +6,7 @@ from google import genai
 from google.genai import types
 from pathlib import Path
 from dotenv import load_dotenv
+from falhas import mensagem_falha
 
 load_dotenv(Path(__file__).with_name(".env"))
 
@@ -208,19 +209,17 @@ def gerar_texto(tema, nivel, historico):
         Responda SOMENTE com o texto final.
         """
 
-    client = genai.Client(
-        api_key=os.environ["GEMINI_API_KEY"],
-        http_options=types.HttpOptions(
-            timeout=20000,
-            retry_options=types.HttpRetryOptions(
-                attempts=1
-            )
-        )
-    )
-
     try:
+        client = genai.Client(
+            api_key=os.getenv("GEMINI_API_KEY"),
+            http_options=types.HttpOptions(
+                timeout=20000,
+                retry_options=types.HttpRetryOptions(attempts=1),
+            ),
+        )
+
         resposta = client.models.generate_content(
-            model="gemini-3.5-flash-lite",
+            model=os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite"),
             contents=prompt,
             config=types.GenerateContentConfig(
                 temperature=0.5,
@@ -248,6 +247,6 @@ def gerar_texto(tema, nivel, historico):
         return texto
 
     except Exception as erro:
-        raise gr.Error(f"Erro ao gerar texto: {erro}")
+        raise gr.Error(mensagem_falha("preparar a leitura", erro)) from erro
 
 

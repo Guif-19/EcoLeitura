@@ -1,0 +1,166 @@
+/* Paleta compartilhada pelo login, cadastro e atividades. */
+:root {
+    color-scheme: light;
+    --eco-fundo: #d9efce;
+    --eco-superficie: #ffffff;
+    --eco-painel: rgba(237, 250, 230, 0.97);
+    --eco-cartao: #fbfef8;
+    --eco-campo: #ffffff;
+    --eco-suave: #e8f3e2;
+    --eco-borda: #b8d0ae;
+    --eco-texto: #245c36;
+    --eco-titulo: #27633c;
+    --eco-secundario: #52634d;
+    --eco-primario: #287a3c;
+    --eco-primario-hover: #206431;
+    --eco-sobre-primario: #ffffff;
+    --eco-destaque: #348b48;
+    --eco-sucesso: #16803c;
+    --eco-sucesso-fundo: #e6f6e9;
+    --eco-erro: #a32424;
+    --eco-erro-fundo: #fff0ed;
+    --eco-sombra: rgba(20, 65, 30, 0.15);
+    --eco-floresta-overlay: rgba(0, 0, 0, 0);
+    --eco-entrada-fundo: radial-gradient(ellipse at top left, #c8e6bb, transparent 60%),
+        linear-gradient(145deg, #eaf6df, #d4eace 60%, #b9d5b2);
+}
+
+:root[data-ecoleitura-tema="dark"] {
+    color-scheme: dark;
+    --eco-fundo: #0e1913;
+    --eco-superficie: #1b2b22;
+    --eco-painel: rgba(19, 34, 25, 0.97);
+    --eco-cartao: #18291f;
+    --eco-campo: #102017;
+    --eco-suave: #253d2d;
+    --eco-borda: #48684e;
+    --eco-texto: #e1efde;
+    --eco-titulo: #b7e4ac;
+    --eco-secundario: #b0c5ad;
+    --eco-primario: #327a45;
+    --eco-primario-hover: #3d8951;
+    --eco-sobre-primario: #ffffff;
+    --eco-destaque: #a3d995;
+    --eco-sucesso: #a1e3ac;
+    --eco-sucesso-fundo: #203b2a;
+    --eco-erro: #ffb4b4;
+    --eco-erro-fundo: #43282a;
+    --eco-sombra: rgba(0, 0, 0, 0.3);
+    --eco-floresta-overlay: rgba(4, 17, 10, 0.82);
+    --eco-entrada-fundo: radial-gradient(ellipse at top left, #264332, transparent 65%),
+        linear-gradient(145deg, #14261b, #0e1913 70%, #1d3224);
+}
+
+html, body {
+    background-color: var(--eco-fundo);
+    color: var(--eco-texto);
+}
+
+.eco-barra-tema {
+    display: flex;
+    flex: 0 0 auto;
+    justify-content: flex-end;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 1250px;
+    margin: 0 auto;
+    padding: 12px 24px 8px;
+}
+
+#ecoleitura-alternar-tema {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 8px 16px;
+    border: 1px solid var(--eco-borda);
+    border-radius: 14px;
+    color: var(--eco-texto);
+    background: var(--eco-cartao);
+    box-shadow: 0 2px 8px var(--eco-sombra);
+    font: 15px 'Trebuchet MS', Arial, sans-serif;
+    cursor: pointer;
+}
+
+#ecoleitura-alternar-tema span {
+    font-size: 22px;
+    line-height: 1;
+}
+
+#ecoleitura-alternar-tema:hover {
+    background: var(--eco-suave);
+}
+
+#ecoleitura-alternar-tema:focus-visible {
+    outline: 3px solid var(--eco-destaque);
+    outline-offset: 3px;
+}
+
+/* As variáveis também cobrem componentes internos do Gradio. */
+:root[data-ecoleitura-tema] .gradio-container {
+    --body-text-color: var(--eco-texto);
+    --body-text-color-subdued: var(--eco-secundario);
+    --background-fill-primary: var(--eco-superficie);
+    --background-fill-secondary: var(--eco-suave);
+    --block-background-fill: var(--eco-superficie);
+    --block-border-color: var(--eco-borda);
+    --block-label-background-fill: var(--eco-suave);
+    --block-label-text-color: var(--eco-texto);
+    --block-info-text-color: var(--eco-secundario);
+    --input-background-fill: var(--eco-campo);
+    --input-background-fill-focus: var(--eco-campo);
+    --input-border-color: var(--eco-borda);
+    --input-border-color-focus: var(--eco-destaque);
+    --input-text-color: var(--eco-texto);
+    --input-placeholder-color: var(--eco-secundario);
+    --button-secondary-background-fill: var(--eco-suave);
+    --button-secondary-background-fill-hover: var(--eco-superficie);
+    --button-secondary-text-color: var(--eco-texto);
+    --button-secondary-border-color: var(--eco-borda);
+    --border-color-primary: var(--eco-borda);
+    --border-color-accent: var(--eco-destaque);
+    --color-accent: var(--eco-destaque);
+    --color-accent-soft: var(--eco-suave);
+    --link-text-color: var(--eco-destaque);
+    --table-border-color: var(--eco-borda);
+    --table-even-background-fill: var(--eco-superficie);
+    --table-odd-background-fill: var(--eco-suave);
+}
+
+:root[data-ecoleitura-tema] .gradio-container input:not([type="radio"]):not([type="checkbox"]):not([type="range"]),
+:root[data-ecoleitura-tema] .gradio-container textarea {
+    color: var(--eco-texto) !important;
+    background-color: var(--eco-campo) !important;
+}
+
+:root[data-ecoleitura-tema] .gradio-container .tab-nav button,
+:root[data-ecoleitura-tema] .gradio-container .caption-label {
+    color: var(--eco-texto) !important;
+}
+
+:root[data-ecoleitura-tema] .gradio-container .tab-nav button.selected {
+    color: var(--eco-destaque) !important;
+    border-color: var(--eco-destaque) !important;
+}
+
+:root[data-ecoleitura-tema] .gradio-container label > span,
+:root[data-ecoleitura-tema] .gradio-container .label-wrap {
+    color: var(--eco-texto) !important;
+    background: var(--eco-suave) !important;
+}
+
+.pagina-cadastro .cartao-cadastro input {
+    background: var(--eco-campo);
+}
+
+.pagina-cadastro .eco-barra-tema {
+    max-width: 480px;
+    padding: 0 0 16px;
+}
+
+@media (max-width: 600px) {
+    .eco-barra-tema {
+        padding: 10px 16px 6px;
+    }
+}
