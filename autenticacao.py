@@ -8,6 +8,7 @@ from fastapi import FastAPI, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
 
 from usuarios import BancoUsuarios, CAMINHO_BANCO
+from tema import instalar_tema
 
 
 # O Gradio não envia o CSS da aplicação antes da autenticação.
@@ -20,7 +21,7 @@ MENSAGEM_LOGIN = "<style>" + CSS_LOGIN + "</style>" + """
     <span class="login-slogan">Melhorando a leitura, cuidando do planeta!</span>
     <span class="login-boas-vindas">Sua aventura começa aqui</span>
     <span class="login-instrucao">
-        Entre com seu usuário e sua senha para aprender com nossos amigos da natureza.
+        Entre para começar sua aventura de leitura.
     </span>
     <span class="login-cadastro">Primeiro acesso? <a href="/cadastro">Criar conta</a></span>
 </span>
@@ -80,6 +81,7 @@ def pagina_cadastro(erro="", usuario="", criado=False):
 def criar_app(demo, caminho_banco=CAMINHO_BANCO, **configuracao_gradio):
     banco = BancoUsuarios(caminho_banco)
     app = FastAPI()
+    instalar_tema(app)
 
     @app.get("/cadastro", response_class=HTMLResponse)
     def mostrar_cadastro(criado: bool = False):
